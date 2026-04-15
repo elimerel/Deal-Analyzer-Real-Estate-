@@ -55,7 +55,6 @@
 [data-theme="dark"] .sticky-pill.good{background:#10b981;color:#fff}
 [data-theme="dark"] .sticky-pill.bad{background:#ef4444;color:#fff}
 [data-theme="dark"] .sticky-label{color:#9ca3af}
-[data-theme="dark"] .sticky-left{background:#2a2a2a;padding:8px 12px;border-radius:8px}
 [data-theme="dark"] .intro h2{background:none;-webkit-text-fill-color:initial;color:#e5e7eb}
 [data-theme="dark"] .btn-primary,
 [data-theme="dark"] .btn-next,
@@ -68,8 +67,6 @@
 [data-theme="dark"] .mini-label{color:#9ca3af}
 [data-theme="dark"] .mini-val{color:#e5e7eb}
 [data-theme="dark"] .theme-toggle-knob{transform:translateX(30px)}
-[data-theme="dark"] .sticky-pill{background:#2a2a2a;border:1px solid #374151}
-[data-theme="dark"] #bar-pill{background:#2a2a2a;border:1px solid #374151}
 [data-theme="dark"] .data-row.total{background:#2a2a2a}
 
 
@@ -278,7 +275,7 @@ tr:last-child td{border-bottom:none}
 @media(max-width:400px){.sticky-stat{display:none}}
 </style>
 <nav class="nav">
-  <div class="nav-brand"><div class="nav-logo">&#127968;</div><div><h1>Deal Analyzer</h1><p>by Eli Merel</p></div></div>
+  <div class="nav-brand" id="nav-home" style="cursor:pointer"><div class="nav-logo">&#127968;</div><div><h1>Deal Analyzer</h1><p>by Eli Merel</p></div></div>
   <div class="theme-toggle" id="theme-toggle"><div class="theme-toggle-knob">☀️</div></div>
 </nav>
 <div class="outer">
@@ -899,6 +896,7 @@ document.addEventListener('DOMContentLoaded', function() {
   calc();
   var m = {
     'btn-start': function(){ startWizard(); },
+    'nav-home': function(){ location.reload(); },
     'theme-toggle': function(){ toggleTheme(); },
     'btn-skip1': function(){ goStep(2); },
     'btn-back0': function(){ goIntro(); },
