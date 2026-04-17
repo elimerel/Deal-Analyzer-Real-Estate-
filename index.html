@@ -1,930 +1,1429 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Real Estate Deal Analyzer</title>
+<title>RealVerdict</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --blue:#2563eb;--blue-light:#dbeafe;--blue-border:#93c5fd;--blue-dark:#1e40af;
-  --green:#059669;--green-light:#d1fae5;--green-border:#6ee7b7;
-  --red:#dc2626;--red-light:#fef2f2;--red-border:#fca5a5;
-  --amber:#d97706;--amber-light:#fffbeb;--amber-border:#fcd34d;
-  --text:#0f172a;--muted:#64748b;--border:#e2e8f0;--bg:#f8faff;
-  --card:#ffffff;--radius:20px;--radius-sm:12px;
+  --bg:#f0f0f6;--card:#fff;--card2:#f5f5fb;--card3:#eaeaf2;
+  --accent:#0db050;--accent2:#0a9444;--ag:rgba(13,176,80,.13);
+  --red:#e02020;--rg:rgba(224,32,32,.10);
+  --yellow:#c47d00;--orange:#c44e00;
+  --text:#0c0c14;--muted:#63667a;--subtle:#a0a3b8;
+  --border:#dcdce8;--borders:#c8c8dc;
+  --ss:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.03);
+  --sm:0 4px 16px rgba(0,0,0,.07),0 1px 4px rgba(0,0,0,.04);
+  --sl:0 14px 44px rgba(0,0,0,.10),0 4px 12px rgba(0,0,0,.05);
+  --r:13px;--rl:18px
 }
 [data-theme="dark"]{
-  --text:#e5e7eb;--muted:#9ca3af;--border:#374151;--bg:#1e1e1e;
-  --card:#2a2a2a;
-  --blue-light:#1e3a8a;--blue-border:#3b82f6;
-  --green-light:#065f46;--green-border:#10b981;
-  --red-light:#7f1d1d;--red-border:#ef4444;
-  --amber-light:#78350f;--amber-border:#f59e0b;
+  --bg:#0d0d13;--card:#17171f;--card2:#1d1d27;--card3:#23232f;
+  --accent:#22d46a;--accent2:#1ab858;--ag:rgba(34,212,106,.12);
+  --red:#ff5050;--rg:rgba(255,80,80,.10);
+  --yellow:#f0a000;--orange:#f06800;
+  --text:#eeeef8;--muted:#8080a0;--subtle:#46465e;
+  --border:#252538;--borders:#323248;
+  --ss:0 1px 4px rgba(0,0,0,.4);
+  --sm:0 4px 20px rgba(0,0,0,.5),0 1px 6px rgba(0,0,0,.3);
+  --sl:0 16px 50px rgba(0,0,0,.6),0 6px 16px rgba(0,0,0,.35)
 }
-[data-theme="dark"] body{background-color:#1e1e1e;background-image:none}
-[data-theme="dark"] .nav{background:rgba(30,30,30,0.9);border-bottom-color:rgba(255,255,255,0.1)}
-[data-theme="dark"] .wizard-card{background:#2a2a2a;border-color:#374151}
-[data-theme="dark"] .intro-card{background:#2a2a2a;border-color:#374151}
-[data-theme="dark"] .results-card{background:#2a2a2a;border-color:#374151}
-[data-theme="dark"] .verdict-hero{background:#374151!important;border-color:#4b5563!important}
-[data-theme="dark"] .kpi{background:#374151!important;border-color:#4b5563!important}
-[data-theme="dark"] .results-card-title{background:#374151;color:#9ca3af}
-[data-theme="dark"] .data-row{border-bottom-color:#374151}
-[data-theme="dark"] .playground{background:#2a2a2a;border-color:#374151}
-[data-theme="dark"] .deep-section{background:#2a2a2a;border-color:#374151}
-[data-theme="dark"] input,
-[data-theme="dark"] select{background:#374151;border-color:#4b5563;color:#e5e7eb}
-[data-theme="dark"] .field-label{color:#9ca3af}
-[data-theme="dark"] .wizard-card-header h3{color:#e5e7eb}
-[data-theme="dark"] .wizard-card-header p{color:#9ca3af}
-[data-theme="dark"] .sticky-bar{background:rgba(30,30,30,0.95);border-top-color:#374151}
-[data-theme="dark"] .sticky-val{color:#e5e7eb}
-[data-theme="dark"] .sticky-stat-val{color:#e5e7eb}
-[data-theme="dark"] .data-val{color:#e5e7eb}
-[data-theme="dark"] .btn-ghost{background:#374151;color:#e5e7eb}
-[data-theme="dark"] .btn-ghost:hover{background:#4b5563}
-[data-theme="dark"] .kpi:hover{box-shadow:0 8px 24px rgba(0,0,0,.3)!important}
-[data-theme="dark"] .btn-primary:hover,
-[data-theme="dark"] .btn-next:hover{box-shadow:0 4px 12px rgba(59,130,246,.2)!important}
-[data-theme="dark"] .intro-start:hover{box-shadow:0 8px 20px rgba(59,130,246,.2)!important}
-[data-theme="dark"] .wizard-card{box-shadow:0 10px 40px rgba(0,0,0,.3)!important}
-[data-theme="dark"] .intro-card{box-shadow:0 20px 60px rgba(0,0,0,.3)!important}
-[data-theme="dark"] .results-card{box-shadow:0 8px 32px rgba(0,0,0,.3)!important}
-[data-theme="dark"] .sticky-pill{color:#e5e7eb}
-[data-theme="dark"] .sticky-pill.good{background:#10b981;color:#fff}
-[data-theme="dark"] .sticky-pill.bad{background:#ef4444;color:#fff}
-[data-theme="dark"] .sticky-label{color:#9ca3af}
-[data-theme="dark"] .intro h2{background:none;-webkit-text-fill-color:initial;color:#e5e7eb}
-[data-theme="dark"] .btn-primary,
-[data-theme="dark"] .btn-next,
-[data-theme="dark"] .intro-start{background:#3b82f6;box-shadow:none}
-[data-theme="dark"] .playground-header{background:#3b82f6}
-[data-theme="dark"] .step-num-badge{background:#374151;border-color:#4b5563}
-[data-theme="dark"] .dot.active{background:#3b82f6;box-shadow:none}
-[data-theme="dark"] .dot.done{background:#10b981;box-shadow:none}
-[data-theme="dark"] .mini-pill{background:#374151;border-color:#4b5563}
-[data-theme="dark"] .mini-label{color:#9ca3af}
-[data-theme="dark"] .mini-val{color:#e5e7eb}
-[data-theme="dark"] .theme-toggle-knob{transform:translateX(30px)}
-[data-theme="dark"] .data-row.total{background:#2a2a2a}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
 
+/* HDR */
+.hdr{position:fixed;top:0;left:0;right:0;z-index:900;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 85%,transparent);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.logo-icon{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px var(--ag);flex-shrink:0}
+.logo-icon svg{width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.logo-text{font-size:1rem;font-weight:900;letter-spacing:-.4px}
+.logo-text .r{color:var(--accent)}
+.tog{background:var(--card);border:1px solid var(--border);border-radius:50px;padding:3px;display:flex;gap:2px;cursor:pointer;box-shadow:var(--ss)}
+.to{width:28px;height:24px;border-radius:40px;display:flex;align-items:center;justify-content:center;font-size:.75rem;transition:all .2s;color:var(--muted)}
+.to.on{background:var(--card2);color:var(--text);box-shadow:var(--ss)}
 
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  background-color:#e8edf5;
-  background-image:
-    radial-gradient(ellipse at 15% 0%,rgba(37,99,235,.18) 0,transparent 45%),
-    radial-gradient(ellipse at 85% 100%,rgba(99,102,241,.14) 0,transparent 45%),
-    radial-gradient(ellipse at 50% 50%,rgba(15,23,42,.03) 0,transparent 60%),
-    url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23000' fill-opacity='.04'/%3E%3C/svg%3E");
-  color:var(--text);min-height:100vh}
-.nav{background:rgba(255,255,255,0.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(15,23,42,0.06);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
-.nav-brand{display:flex;align-items:center;gap:10px}
-.nav-logo{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),#6366f1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
-.nav-brand h1{font-size:16px;font-weight:800;color:var(--text)}
-.nav-brand p{font-size:11px;color:var(--muted);margin-top:1px}
-.theme-toggle{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);border-radius:99px;width:60px;height:30px;position:relative;cursor:pointer;transition:all .3s ease;display:flex;align-items:center;justify-content:flex-start;padding:3px;user-select:none;-webkit-user-select:none}
-.theme-toggle-knob{width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2);transition:all .3s ease;display:flex;align-items:center;justify-content:center;font-size:12px;transform:translateX(0)}
-.nav-badge{background:var(--blue-light);color:var(--blue);font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;border:1px solid var(--blue-border)}
+/* SCREENS */
+.screen{display:none;min-height:100vh;padding-top:54px}
+.screen.active{display:flex}
+
+/* OPENING */
+#opening{flex-direction:column;align-items:center;justify-content:center;gap:44px;padding:80px 24px 60px;min-height:100vh}
+.open-hero{text-align:center;opacity:0;transform:translateY(22px)}
+.open-hero.in{animation:fadeUp .65s cubic-bezier(.22,1,.36,1) forwards}
+.open-h1{font-size:4.2rem;font-weight:900;letter-spacing:-2.5px;line-height:1;margin-bottom:12px}
+.open-h1 .r{color:var(--accent)}
+.open-sub{color:var(--muted);font-size:1.05rem;line-height:1.5}
+.open-note{font-size:.75rem;color:var(--subtle);margin-top:6px;font-style:italic}
+.open-cta{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:14px;padding:17px 48px;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 6px 22px var(--ag);transition:all .22s;opacity:0;transform:translateY(16px)}
+.open-cta.in{animation:fadeUp .6s .2s cubic-bezier(.22,1,.36,1) forwards}
+.open-cta:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--ag)}
+.open-by{font-size:.7rem;color:var(--subtle);opacity:0;animation:fadeUp .6s .38s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
 /* WIZARD */
-.outer{max-width:680px;margin:0 auto;padding:28px 20px 140px}
-.intro{text-align:center;padding:60px 20px 40px;animation:fadeUp .5s ease}
-.intro h2{font-size:40px;font-weight:800;background:linear-gradient(135deg,var(--text),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px;line-height:1.2;letter-spacing:-.02em}
-.intro p{font-size:16px;color:var(--muted);max-width:420px;margin:0 auto 32px;line-height:1.6}
-.intro-card-base{position:relative;overflow:hidden}
-.intro-card::before{content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(37,99,235,0.03) 90deg,transparent 180deg);animation:rotate 20s linear infinite;pointer-events:none}
-@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.intro-card{background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,1);border-radius:24px;padding:48px 40px;box-shadow:0 20px 60px rgba(59,130,246,.15),0 8px 24px rgba(15,23,42,.08);max-width:480px;margin:0 auto}
-.intro-start{background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;border:none;padding:18px 48px;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(59,130,246,.4)}
-.intro-start:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(59,130,246,.4)}
-.wizard-header{display:none;margin-bottom:28px}
-.wizard-header.show{display:block;animation:fadeUp .4s ease}
-.step-dots{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:12px}
-.dot{width:8px;height:8px;border-radius:50%;background:#e2e8f0;transition:all .3s}
-.dot.active{background:linear-gradient(135deg,var(--blue),var(--blue-dark));width:24px;border-radius:99px;box-shadow:0 2px 8px rgba(59,130,246,.3)}
-.dot.done{background:linear-gradient(135deg,var(--green),#047857);box-shadow:0 2px 6px rgba(22,163,74,.3);animation:pulse .6s ease}
-.wizard-title{text-align:center;font-size:13px;color:var(--muted);font-weight:600}
-.wizard-card{transition:all .3s cubic-bezier(.4,0,.2,1);background:rgba(255,255,255,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:var(--radius);border:1px solid rgba(255,255,255,1);box-shadow:0 10px 40px rgba(15,23,42,.12),0 2px 8px rgba(15,23,42,.06);overflow:hidden;display:none;animation:slideIn .4s cubic-bezier(.4,0,.2,1)}
-.wizard-card.active{display:block}
-.wizard-card-header{padding:24px 28px 0}
-.step-num-badge{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue-light),#fff);border:2px solid var(--blue-border);color:var(--blue);font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:12px;box-shadow:0 2px 8px rgba(59,130,246,.15)}
-.wizard-card-header h3{font-size:20px;font-weight:800;color:var(--text);margin-bottom:4px}
-.wizard-card-header p{font-size:13px;color:var(--muted);margin-bottom:20px}
-.wizard-card-body{padding:0 28px}
-.wizard-card-footer{padding:20px 28px 24px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);margin-top:20px}
+#wizard{flex-direction:column;align-items:center;padding:74px 20px 80px;gap:22px}
+.prog{display:flex;align-items:center;gap:8px}
+.pd{width:7px;height:7px;border-radius:50%;background:var(--card3);transition:all .3s}
+.pd.active{background:var(--accent);width:20px;border-radius:5px;box-shadow:0 0 8px var(--ag)}
+.pd.done{background:var(--accent2);opacity:.55}
+.pl{width:20px;height:2px;background:var(--card3);border-radius:2px;transition:background .3s}
+.pl.done{background:var(--accent2);opacity:.55}
+.wb{width:100%;max-width:540px;display:flex;flex-direction:column;gap:15px}
+@keyframes sOL{to{opacity:0;transform:translateX(-28px)}}
+@keyframes sIR{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes sOR{to{opacity:0;transform:translateX(28px)}}
+@keyframes sIL{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.sol{animation:sOL .22s ease forwards}
+.sir{animation:sIR .28s ease forwards}
+.sor{animation:sOR .22s ease forwards}
+.sil{animation:sIL .28s ease forwards}
+.rf{opacity:0;transform:translateY(8px);transition:opacity .34s ease,transform .34s ease;pointer-events:none;max-height:0;overflow:hidden}
+.rf.s{opacity:1;transform:none;pointer-events:all;max-height:900px;overflow:visible}
+.shint{color:var(--muted);font-size:.68rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;text-align:center}
+.stitle{font-size:1.75rem;font-weight:800;letter-spacing:-.6px;text-align:center;line-height:1.2}
+
+/* ADDRESS */
+.addr-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:22px;box-shadow:var(--ss)}
+.addr-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:12px}
+.ainp{background:var(--card2);border:1.5px solid var(--border);border-radius:9px;padding:11px 13px;font-size:.88rem;font-family:'Inter',sans-serif;color:var(--text);width:100%;outline:none;transition:border-color .18s,box-shadow .18s}
+.ainp::placeholder{color:var(--subtle)}
+.ainp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--ag)}
+select.ainp{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2363667a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.ag2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+
+/* PRICE */
+.price-hero{text-align:center;padding:10px 0 4px;transition:all .42s cubic-bezier(.4,0,.2,1)}
+.price-hero.sm{padding:2px 0}
+.prow{display:flex;align-items:baseline;justify-content:center;gap:3px}
+.psym{font-weight:800;color:var(--accent);transition:font-size .42s cubic-bezier(.4,0,.2,1);font-size:2.8rem}
+.price-hero.sm .psym{font-size:1.8rem}
+#pp{background:transparent;border:none;border-bottom:3px solid var(--border);font-weight:900;color:var(--text);text-align:center;outline:none;font-family:'Inter',sans-serif;letter-spacing:-1.5px;transition:all .42s cubic-bezier(.4,0,.2,1);font-size:4.2rem;width:290px}
+#pp.sm{font-size:2.4rem;width:220px;border-bottom-width:2px}
+#pp:focus{border-color:var(--accent)}
+#pp::placeholder{color:var(--card3)}
+.plabel{font-size:.7rem;color:var(--muted);margin-top:6px;font-weight:500}
+
+/* UNIT CARDS */
+.ugrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.uc{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:14px 6px;cursor:pointer;transition:all .18s;text-align:center;box-shadow:var(--ss)}
+.uc:hover{border-color:var(--accent)}
+.uc.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--card));box-shadow:0 0 0 3px var(--ag)}
+.uc .ui{font-size:1.3rem;margin-bottom:4px}
+.uc span{font-size:.69rem;color:var(--muted);font-weight:600}
+
+/* TOOLTIP */
+.qw{position:relative;display:inline-flex;align-items:center}
+.qb{width:14px;height:14px;border-radius:50%;background:var(--card3);border:1px solid var(--border);color:var(--muted);font-size:.58rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .16s;flex-shrink:0;font-family:'Inter',sans-serif}
+.qb:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.ttip{display:none;position:fixed;background:var(--card);border:1px solid var(--borders);border-radius:10px;padding:12px 15px;font-size:.78rem;color:var(--text);width:240px;z-index:2000;line-height:1.65;box-shadow:var(--sl)}
+.ttip.show{display:block;animation:tFade .14s ease}
+@keyframes tFade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--ss)}
+.cardg{background:linear-gradient(145deg,var(--card) 60%,color-mix(in srgb,var(--accent) 4%,var(--card)));border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--ss)}
+
+/* SLIDERS */
+.fl{font-size:.68rem;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.25px}
+.sv{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sv .v{font-size:1.04rem;font-weight:800}
+.sv .vs{font-size:.8rem;font-weight:600;color:var(--muted)}
+.strk{position:relative;height:24px;display:flex;align-items:center}
+.strk-bg{position:absolute;left:0;right:0;height:5px;top:50%;transform:translateY(-50%);border-radius:5px;background:var(--card3);box-shadow:inset 0 1px 2px rgba(0,0,0,.08);pointer-events:none}
+.strk-fill{position:absolute;left:0;height:5px;top:50%;transform:translateY(-50%);border-radius:5px;pointer-events:none;transition:none}
+input[type=range]{position:relative;-webkit-appearance:none;width:100%;height:5px;background:transparent;outline:none;cursor:pointer;z-index:2}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--card);border:2.5px solid var(--accent);cursor:pointer;box-shadow:var(--ss);transition:transform .13s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--card);border:2.5px solid var(--accent);cursor:pointer}
+
+/* INPUT ROW */
+.irow{display:flex;align-items:center;background:var(--card2);border:1.5px solid var(--border);border-radius:9px;overflow:hidden;transition:border-color .18s,box-shadow .18s}
+.irow:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--ag)}
+.isym{padding:10px 2px 10px 12px;font-size:.88rem;font-weight:700;color:var(--accent)}
+.irow input{background:transparent;border:none;padding:10px 11px 10px 3px;font-size:.88rem;font-weight:700;color:var(--text);width:100%;outline:none;font-family:'Inter',sans-serif}
+
+/* PERIOD PILL */
+.ppill{display:flex;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px}
+.ppo{padding:5px 13px;border-radius:6px;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .16s;color:var(--muted);user-select:none}
+.ppo.on{background:var(--card);color:var(--text);box-shadow:var(--ss)}
+
+/* INCOME */
+.rent-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.rent-row label{font-size:.72rem;color:var(--muted);width:48px;font-weight:600;flex-shrink:0}
+.rent-row .irow{flex:1}
+.est-badge{font-size:.6rem;font-weight:600;color:var(--yellow);background:color-mix(in srgb,var(--yellow) 12%,var(--card2));border:1px solid color-mix(in srgb,var(--yellow) 25%,var(--border));border-radius:4px;padding:1px 5px;letter-spacing:.2px}
+.gmeter{padding-top:12px;border-top:1px solid var(--border);margin-top:4px;display:flex;flex-direction:column;gap:6px}
+.gnum{font-size:1.5rem;font-weight:900;letter-spacing:-.7px;transition:color .35s}
+.gsub{font-size:.7rem;font-weight:600;transition:color .35s}
+.mtrk{height:6px;border-radius:6px;background:var(--card3);overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.07)}
+.mfill{height:100%;border-radius:6px;transition:width .45s cubic-bezier(.4,0,.2,1),background .35s}
+
+/* RECEIPT */
+.receipt{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--ss)}
+.rcp-head{padding:11px 20px 8px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.rcp-head-l{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.rcp-body{padding:0 20px}
+.rline{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid color-mix(in srgb,var(--border) 55%,transparent)}
+.rline:last-child{border-bottom:none}
+.rline.mort-line{background:color-mix(in srgb,var(--accent) 6%,transparent);margin:0 -20px;padding:10px 20px;border-bottom:1px solid var(--border)}
+.rline-name{font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:6px;flex:1;min-width:0;color:var(--text)}
+.rline-amt{font-size:.9rem;font-weight:800;white-space:nowrap;text-align:right;color:var(--muted)}
+.rline-amt.mort-amt{color:var(--accent);font-size:.95rem}
+.rline-input{width:90px;flex-shrink:0}
+.rline-input input{background:var(--card2);border:1.5px solid var(--border);border-radius:7px;padding:5px 8px;font-size:.8rem;font-weight:700;font-family:'Inter',sans-serif;color:var(--text);width:100%;outline:none;text-align:right;transition:border-color .18s}
+.rline-input input:focus{border-color:var(--accent)}
+.rline-input input.est-inp{border-color:color-mix(in srgb,var(--yellow) 40%,var(--border));color:var(--yellow)}
+.rline-input input.est-inp:focus{border-color:var(--accent);color:var(--text)}
+.rcp-dash{height:1px;background:repeating-linear-gradient(90deg,var(--borders) 0,var(--borders) 5px,transparent 5px,transparent 10px);margin:2px 0}
+.rcp-total{padding:13px 20px;background:var(--card2);display:flex;align-items:center;justify-content:space-between}
+.rcp-total-label{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.rcp-total-sub{font-size:.63rem;color:var(--subtle)}
+.rcp-total-v{font-size:1.5rem;font-weight:900;color:var(--red);letter-spacing:-.7px}
+.rcp-total-yr{font-size:.7rem;color:var(--muted);font-weight:600}
+
+/* NAV */
+.navbtns{display:flex;gap:10px}
+.btn{padding:13px 20px;border-radius:10px;border:none;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;flex:1}
+.btn-p{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 14px var(--ag)}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 22px var(--ag)}
+.btn-g{background:var(--card);color:var(--muted);border:1.5px solid var(--border);box-shadow:var(--ss)}
+.btn-g:hover{color:var(--text)}
+
 /* RESULTS */
-.results-screen{display:none}
-.results-screen>*{animation:fadeUp .4s ease backwards}
-.results-screen>*:nth-child(1){animation-delay:.05s}
-.results-screen>*:nth-child(2){animation-delay:.1s}
-.results-screen>*:nth-child(3){animation-delay:.15s}
-.results-screen>*:nth-child(4){animation-delay:.2s}
-.results-screen>*:nth-child(5){animation-delay:.25s}
+#results{display:none;padding-top:54px}
+#results.active{display:block}
+.dash{max-width:1180px;margin:0 auto;padding:26px 24px 80px}
 
-.results-screen.show{display:block}
-.verdict-hero{border-radius:var(--radius);padding:32px;border:2px solid;display:flex;align-items:center;gap:24px;margin-bottom:20px;box-shadow:0 12px 40px rgba(0,0,0,.1);transition:all .2s}
-.verdict-hero:hover{transform:translateY(-2px);box-shadow:0 16px 56px rgba(0,0,0,.12)}
-.verdict-hero.great,.verdict-hero.good{background:var(--green-light);border-color:var(--green-border)}
-.verdict-hero.ok{background:var(--amber-light);border-color:var(--amber-border)}
-.verdict-hero.bad{background:var(--red-light);border-color:var(--red-border)}
-.verdict-hero.waiting{background:var(--blue-light);border-color:var(--blue-border)}
-.verdict-icon{font-size:48px;flex-shrink:0}
-.verdict-title{font-size:22px;font-weight:800;line-height:1.2;margin-bottom:6px}
-.verdict-hero.great .verdict-title,.verdict-hero.good .verdict-title{color:var(--green)}
-.verdict-hero.ok .verdict-title{color:var(--amber)}
-.verdict-hero.bad .verdict-title{color:var(--red)}
-.verdict-hero.waiting .verdict-title{color:var(--blue)}
-.verdict-sub{font-size:14px;color:var(--muted);line-height:1.5}
-.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.kpi{border-radius:var(--radius-sm);padding:14px;text-align:center;border:1.5px solid;position:relative;overflow:hidden;transition:all .2s}
-.kpi:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.12)}
-.kpi::before{content:"";position:absolute;bottom:0;left:0;width:100%;height:3px;transition:height .3s}
-.kpi.good::before{background:linear-gradient(90deg,var(--green),#047857)}
-.kpi.bad::before{background:linear-gradient(90deg,var(--red),#991b1b)}
-.kpi.warn::before{background:linear-gradient(90deg,var(--amber),#d97706)}
-.kpi.neutral::before{background:linear-gradient(90deg,var(--blue),var(--blue-dark))}
-.kpi:hover::before{height:6px}
+/* VERDICT */
+.verdict-card{border-radius:var(--rl);padding:26px 28px;margin-bottom:18px;box-shadow:var(--sm);border:1px solid var(--border);transition:background .4s,border-color .4s;position:relative;overflow:hidden}
+.verdict-tint{position:absolute;inset:0;opacity:.06;transition:background .4s;pointer-events:none;border-radius:inherit}
+.verdict-content{position:relative;z-index:1}
+.verdict-label{font-size:2rem;font-weight:900;letter-spacing:-.8px;margin-bottom:6px;transition:color .3s;line-height:1}
+.verdict-advice{font-size:.9rem;line-height:1.72;color:var(--text);max-width:760px;opacity:.85}
 
-.kpi.good{background:rgba(240,253,244,0.95);border-color:var(--green-border);box-shadow:0 4px 20px rgba(22,163,74,.14),inset 0 1px 0 rgba(255,255,255,.8)}
-.kpi.bad{background:rgba(254,242,242,0.95);border-color:var(--red-border);box-shadow:0 4px 20px rgba(220,38,38,.14),inset 0 1px 0 rgba(255,255,255,.8)}
-.kpi.warn{background:rgba(255,251,235,0.95);border-color:var(--amber-border);box-shadow:0 4px 20px rgba(217,119,6,.14),inset 0 1px 0 rgba(255,255,255,.8)}
-.kpi.neutral{background:rgba(239,246,255,0.95);border-color:var(--blue-border);box-shadow:0 4px 20px rgba(59,130,246,.14),inset 0 1px 0 rgba(255,255,255,.8)}
-.kpi-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.kpi.good .kpi-label{color:var(--green)}.kpi.bad .kpi-label{color:var(--red)}
-.kpi.warn .kpi-label{color:var(--amber)}.kpi.neutral .kpi-label{color:var(--blue)}
-.kpi-val{font-size:26px;font-weight:800;line-height:1}
-.kpi.good .kpi-val{color:var(--green)}.kpi.bad .kpi-val{color:var(--red)}
-.kpi.warn .kpi-val{color:var(--amber)}.kpi.neutral .kpi-val{color:var(--blue)}
-.kpi-sub{font-size:10px;margin-top:3px;color:var(--muted)}
-.results-card{background:rgba(255,255,255,0.98);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:var(--radius);border:1px solid rgba(255,255,255,1);box-shadow:0 8px 32px rgba(15,23,42,.08),0 2px 8px rgba(15,23,42,.04);overflow:hidden;margin-bottom:12px;transition:all .2s}
-.results-card:hover{box-shadow:0 12px 48px rgba(15,23,42,.12),0 4px 12px rgba(15,23,42,.06)}
-.results-card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:12px 18px;border-bottom:1px solid var(--border);background:#fafbfc}
-.data-row{display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-bottom:1px solid #f8fafc}
-.data-row:last-child{border:none}
-.data-row.total{background:#fafbfc;border-top:2px solid var(--border)}
-.data-label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px}
-.data-val{font-size:13px;font-weight:700;color:var(--text)}
-.pos{color:var(--green)}.neg{color:var(--red)}.warn{color:var(--amber)}.blue{color:var(--blue)}
-/* PLAYGROUND */
-.playground{background:rgba(255,255,255,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:var(--radius);border:1px solid rgba(255,255,255,1);box-shadow:0 12px 40px rgba(59,130,246,.15),0 2px 8px rgba(59,130,246,.08),inset 0 1px 0 rgba(255,255,255,1);overflow:hidden;margin-bottom:12px}
-.playground-header{background:linear-gradient(135deg,var(--blue),var(--blue-dark));padding:18px 20px;box-shadow:0 2px 8px rgba(37,99,235,.2)}
-.playground-header h4{font-size:14px;font-weight:800;color:#fff}
-.playground-header p{font-size:11px;color:rgba(255,255,255,.75);margin-top:2px}
-.playground-body{padding:20px}
-.play-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.play-field{display:flex;flex-direction:column;gap:6px}
-.play-field label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between}
-.play-field label span{color:var(--blue);font-weight:800;font-size:12px}
-.play-field input[type=range]{width:100%;height:5px;border-radius:99px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,var(--blue) var(--pct,50%),#e2e8f0 var(--pct,50%));outline:none;cursor:pointer}
-.play-field input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid var(--blue);box-shadow:0 2px 6px rgba(59,130,246,.3);cursor:pointer}
-/* DEEP DIVE */
-.deep-dive{margin-top:4px}
-.divider-line{display:flex;align-items:center;gap:12px;margin:20px 0}
-.divider-line::before,.divider-line::after{content:"";flex:1;height:1px;background:var(--border)}
-.divider-text{font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
-.deep-section{background:rgba(255,255,255,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:var(--radius);border:1px solid rgba(255,255,255,1);box-shadow:0 12px 40px rgba(15,23,42,.10),0 2px 8px rgba(15,23,42,.05),inset 0 1px 0 rgba(255,255,255,1);overflow:hidden;margin-bottom:10px}
-.deep-section-header{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;user-select:none}
-.deep-section-badge{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.deep-section-title{font-size:14px;font-weight:700;color:var(--text);flex:1}
-.deep-section-sub{font-size:11px;color:var(--muted);margin-top:2px}
-.ds-chevron{color:var(--muted);font-size:14px;transition:transform .2s}
-.deep-section.collapsed .deep-section-body{display:none}
-.deep-section.collapsed .ds-chevron{transform:rotate(-90deg)}
-.deep-section-body{padding:0 18px 18px}
-/* FIELDS */
-.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
-.field:last-child{margin-bottom:0}
-.field.full{grid-column:1/-1;margin-bottom:10px}
-.field label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:5px}
-.tip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:#e2e8f0;color:var(--muted);font-size:9px;font-weight:800;cursor:pointer;position:relative;flex-shrink:0}
-.tip:hover .tip-text{display:block}
-.tip-text{display:none;position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;font-size:11px;padding:6px 10px;border-radius:8px;z-index:100;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:220px;white-space:normal;text-align:center}
-.field input,.field select{width:100%;padding:10px 13px;font-size:14px;font-weight:500;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:rgba(248,250,252,0.9);color:var(--text);transition:all .15s;-webkit-appearance:none;outline:none;box-shadow:inset 0 1px 3px rgba(0,0,0,.04)}
-.field input:focus,.field select:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
-.field .hint{font-size:10px;color:#94a3b8;margin-top:2px}
-.prefix-wrap{position:relative}
-.prefix-wrap input{padding-left:26px}
-.prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600;font-size:13px;pointer-events:none}
-.slider-field{margin-bottom:14px}
-.slider-field label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.slider-val{color:var(--blue);font-weight:800;font-size:14px;background:var(--blue-light);padding:2px 10px;border-radius:99px;border:1px solid var(--blue-border)}
-input[type=range]{width:100%;height:5px;border-radius:99px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,var(--blue) var(--pct,50%),#e2e8f0 var(--pct,50%));outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--blue);box-shadow:0 2px 8px rgba(59,130,246,.3);cursor:pointer;transition:transform .15s}
-input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
-.mini-results{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;padding-top:14px;border-top:1.5px dashed var(--border)}
-.mini-pill{background:rgba(239,246,255,0.8);border:1px solid var(--blue-border);border-radius:10px;padding:8px 10px;text-align:center;box-shadow:0 1px 4px rgba(59,130,246,.06)}
-.mini-label{font-size:9px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
-.mini-val{font-size:13px;font-weight:800;color:var(--text)}
-.info-pill{display:inline-flex;align-items:center;gap:5px;background:var(--blue-light);border:1px solid var(--blue-border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--blue);font-weight:600;margin-bottom:12px}
-.warn-pill{display:inline-flex;align-items:center;gap:5px;background:var(--amber-light);border:1px solid var(--amber-border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--amber);font-weight:600;margin-bottom:12px}
-.divider{height:1px;background:var(--border);margin:14px 0}
-.sub-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px}
-/* TABLES */
-.tbl-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1.5px solid var(--border)}
-table{width:100%;border-collapse:collapse;font-size:12px;min-width:440px}
-th{font-size:10px;font-weight:700;color:var(--muted);background:#f8fafc;padding:8px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--border)}
-th:first-child{text-align:left}
-td{padding:8px 10px;text-align:right;border-bottom:1px solid #f8fafc;font-weight:500;color:var(--text)}
-td:first-child{text-align:left;color:var(--muted);font-weight:400;font-size:11px}
-tr.hl td{background:var(--blue-light);font-weight:800;color:var(--blue)}
-tr:last-child td{border-bottom:none}
-.scen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.scen{border-radius:var(--radius-sm);padding:14px;border:1.5px solid}
-.scen.bear{background:var(--red-light);border-color:var(--red-border)}
-.scen.base{background:var(--blue-light);border-color:var(--blue-border)}
-.scen.bull{background:var(--green-light);border-color:var(--green-border)}
-.scen-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
-.scen.bear .scen-title{color:var(--red)}.scen.base .scen-title{color:var(--blue)}.scen.bull .scen-title{color:var(--green)}
-.scen-row{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.06)}
-.scen-row:last-child{border:none}
-.scen-row span:first-child{color:var(--muted)}.sv{font-weight:700;color:var(--text)}
-.sens-table td,.sens-table th{font-size:11px;font-weight:700;padding:6px 8px}
-/* BUTTONS */
-.btn{padding:11px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:7px;transition:all .15s}
-.btn-ghost{background:#f1f5f9;color:var(--text);border:1.5px solid var(--border)}.btn-ghost:hover{background:#e2e8f0}
-.btn-full{width:100%;justify-content:center}
-.btn-next{background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;padding:13px 32px;border-radius:99px;font-size:14px;font-weight:800;border:1px solid rgba(255,255,255,.2);cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(59,130,246,.35),inset 0 1px 0 rgba(255,255,255,.25)}
-.btn-next:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.35)}
-.btn-back{background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;padding:8px}
-.btn-back:hover{color:var(--text)}
-.btn-skip{background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;padding:8px}
-.btn-skip:hover{color:var(--text)}
+/* DASH GRID */
+.dg4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:13px}
+.dg2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+.dg3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:13px}
+.dg-charts{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+.dg-gauges{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
 
-.btn-restart{background:none;border:1.5px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;padding:8px 16px;border-radius:8px}
-/* STICKY */
-.sticky-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.8);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.5);padding:12px 24px;z-index:300;box-shadow:0 -4px 40px rgba(15,23,42,.14),inset 0 1px 0 rgba(255,255,255,0.8);display:none}
-.sticky-bar.show{display:block}
-.sticky-inner{max-width:680px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
-.sticky-left{display:flex;flex-direction:column}
-.sticky-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-.sticky-val{font-size:22px;font-weight:800;line-height:1.1}
-.sticky-right{display:flex;align-items:center;gap:12px}
-.sticky-stat{text-align:right}
-.sticky-stat-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted)}
-.sticky-stat-val{font-size:15px;font-weight:800;color:var(--text)}
-.sticky-pill{padding:10px 20px;border-radius:99px;font-size:13px;font-weight:800;border:none;cursor:pointer}
-.sticky-pill.great,.sticky-pill.good{background:var(--green);color:#fff}
-.sticky-pill.ok{background:var(--amber);color:#fff}
-.sticky-pill.bad{background:var(--red);color:#fff}
-.sticky-pill.waiting{background:var(--blue);color:#fff}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
-@keyframes slideBack{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
-@media(max-width:600px){.field-grid{grid-template-columns:1fr}.field.full{grid-column:1}.scen-grid{grid-template-columns:1fr}.play-grid{grid-template-columns:1fr}}
-@media(max-width:400px){.sticky-stat{display:none}}
+/* DCARD */
+.dcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--ss);transition:border-color .2s}
+.dcard:hover{border-color:var(--borders)}
+.dcard-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.dcard-val{font-size:1.8rem;font-weight:900;letter-spacing:-.8px;line-height:1;transition:color .3s}
+.dcard-sub{font-size:.75rem;color:var(--muted);margin-top:5px;font-weight:500;transition:color .3s}
+
+/* GAUGES — 2 only, flip-reveal within card */
+.gcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--ss);cursor:pointer;transition:border-color .22s,box-shadow .22s;overflow:hidden;position:relative}
+.gcard:hover{border-color:var(--borders);box-shadow:var(--sm)}
+.gcard-inner{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+.gauge-svg{display:block}
+.garc{transition:stroke-dashoffset .85s cubic-bezier(.4,0,.2,1),stroke .3s}
+.glabel{font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.35px;text-align:center}
+.gval{font-size:1.2rem;font-weight:900;letter-spacing:-.4px;transition:color .3s;text-align:center}
+.gcard-right{display:flex;flex-direction:column;gap:4px}
+.gcard-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.gcard-mainval{font-size:1.6rem;font-weight:900;letter-spacing:-.7px;line-height:1;transition:color .3s}
+.gcard-sub{font-size:.74rem;color:var(--muted);line-height:1.5;margin-top:2px}
+.gcard-detail{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(.4,0,.2,1),opacity .3s;opacity:0}
+.gcard.open .gcard-detail{max-height:120px;opacity:1}
+.gcard-detail-inner{padding-top:12px;margin-top:12px;border-top:1px solid var(--border)}
+.gcard-desc{font-size:.76rem;color:var(--muted);line-height:1.6;margin-bottom:8px}
+.gcard-range{display:flex;height:5px;border-radius:5px;overflow:hidden;gap:2px}
+.gcard-range-seg{flex:1;height:100%;border-radius:2px}
+.gcard-markers{display:flex;justify-content:space-between;font-size:.6rem;color:var(--subtle);margin-top:3px}
+.gcard-where{font-size:.68rem;font-weight:600;color:var(--muted);margin-top:5px}
+
+/* CF income statement */
+.cf-stmt{display:flex;flex-direction:column}
+.cfl{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.cfl:last-child{border-bottom:none}
+.cfl.total{padding-top:11px;margin-top:3px;border-top:2px solid var(--borders);border-bottom:none}
+.cfl-label{font-size:.8rem;font-weight:500;color:var(--muted);display:flex;align-items:center;gap:5px}
+.cfl-val{font-size:.85rem;font-weight:700;transition:color .3s}
+.cfl.total .cfl-label{font-size:.88rem;font-weight:700;color:var(--text)}
+.cfl.total .cfl-val{font-size:1.1rem;font-weight:900}
+
+/* DONUT */
+.donut-wrap{display:flex;align-items:flex-start;gap:16px}
+.donut-legend{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.dl-row{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.dl-left{display:flex;align-items:center;gap:6px;min-width:0}
+.dl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dl-label{font-size:.72rem;font-weight:500;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dl-val{font-size:.72rem;font-weight:700;flex-shrink:0}
+
+/* EDIT PANEL */
+.edit-panel{background:linear-gradient(145deg,var(--card) 60%,color-mix(in srgb,var(--accent) 4%,var(--card)));border:1px solid var(--border);border-radius:var(--rl);padding:22px;box-shadow:var(--ss);margin-bottom:13px}
+.edit-panel-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:18px}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.edit-row{display:flex;flex-direction:column;gap:7px}
+
+/* STRESS */
+.stress-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 14px;text-align:center;box-shadow:var(--ss)}
+.st{font-size:.65rem;color:var(--muted);font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px;line-height:1.4}
+.sn{font-size:1.05rem;font-weight:800;letter-spacing:-.3px;transition:color .3s}
+.si{width:6px;height:6px;border-radius:50%;margin:5px auto 0;transition:background .3s}
+
+/* ADVANCED */
+.adv-btn-wrap{text-align:center;margin:6px 0}
+.adv-btn{background:var(--card);border:1.5px solid var(--border);border-radius:30px;padding:11px 28px;font-size:.8rem;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;box-shadow:var(--ss)}
+.adv-btn:hover{border-color:var(--accent);color:var(--accent)}
+.adv-sec{overflow:hidden;max-height:0;transition:max-height .55s cubic-bezier(.4,0,.2,1)}
+.adv-sec.open{max-height:3000px}
+.adv-inner{padding-top:20px;display:flex;flex-direction:column;gap:20px}
+.adv-metric{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:24px 26px;box-shadow:var(--ss);display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start}
+.adv-metric-left{}
+.adv-metric-key{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px}
+.adv-metric-name{font-size:1.1rem;font-weight:800;letter-spacing:-.3px;margin-bottom:8px}
+.adv-metric-desc{font-size:.82rem;color:var(--muted);line-height:1.7;max-width:480px}
+.adv-metric-verdict{font-size:.8rem;font-weight:600;margin-top:10px;padding:8px 12px;border-radius:8px;display:inline-block}
+.adv-metric-right{text-align:right;flex-shrink:0}
+.adv-metric-val{font-size:2.4rem;font-weight:900;letter-spacing:-1.5px;line-height:1;transition:color .3s}
+.adv-metric-unit{font-size:.75rem;font-weight:600;color:var(--muted);margin-top:3px}
+.adv-range-bar{height:6px;border-radius:6px;overflow:hidden;display:flex;gap:2px;margin-top:12px}
+.adv-range-seg{height:100%;border-radius:3px}
+
+/* CHARTS */
+.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.chart-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.35px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.tf-row{display:flex;gap:4px}
+.tfb{padding:4px 10px;border-radius:18px;border:1px solid var(--border);background:var(--card2);font-size:.68rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .16s;font-family:'Inter',sans-serif}
+.tfb.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 8px var(--ag)}
+canvas{display:block;width:100%;cursor:crosshair}
+.leg{display:flex;gap:12px;margin-top:8px}
+.legi{display:flex;align-items:center;gap:5px;font-size:.68rem;color:var(--muted)}
+.legdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.chart-nums{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.cnb{background:var(--card2);border-radius:9px;padding:11px 13px;border:1px solid var(--border)}
+.cnl{font-size:.62rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.cnv{font-size:1.2rem;font-weight:900;letter-spacing:-.5px;margin-top:3px;transition:color .3s}
+
+/* ACTIONS */
+.dash-actions{display:flex;gap:10px;margin-bottom:18px}
+.act-btn{padding:10px 18px;border-radius:9px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .18s;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:5px;box-shadow:var(--ss)}
+.act-btn:hover{color:var(--text);border-color:var(--muted)}
+.act-btn.pr{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent;box-shadow:0 4px 14px var(--ag)}
+.act-btn.pr:hover{transform:translateY(-1px)}
+
+/* FLOAT TIP */
+#cft{position:fixed;z-index:3000;pointer-events:none;display:none;background:var(--card);border:1px solid var(--borders);border-radius:12px;padding:13px 17px;box-shadow:var(--sl);min-width:155px;opacity:0;transition:opacity .12s}
+#cft.show{opacity:1}
+.cft-yr{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:7px}
+.cft-row{display:flex;justify-content:space-between;gap:16px;margin-bottom:4px}
+.cft-row:last-child{margin-bottom:0}
+.cft-l{font-size:.74rem;color:var(--muted)}
+.cft-v{font-size:.88rem;font-weight:800}
+
+/* PDF MODAL */
+.mover{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1500;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.mover.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:26px;width:320px;box-shadow:var(--sl)}
+.modal h3{font-size:.94rem;font-weight:700;margin-bottom:4px}
+.modal p{font-size:.76rem;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.modal input{width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:.86rem;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:border-color .18s;margin-bottom:11px}
+.modal input:focus{border-color:var(--accent)}
+.modal-btns{display:flex;gap:9px}
+
+/* PRINT */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body,#results{background:#fff!important;color:#111!important}
+  .hdr,.dash-actions,.edit-panel,.adv-btn-wrap,.adv-sec,.mover,#cft,.gcard,.dg-gauges,.donut-wrap canvas,.verdict-card,.dg-charts,.stress-grid{display:none!important}
+  #results{padding-top:0!important;display:block!important}
+  .dash{padding:0 24px 40px!important;max-width:100%!important}
+  .pdf-doc{display:block!important}
+  .screen{display:none!important}
+  #results.active{display:block!important}
+}
+.pdf-doc{display:none}
+.pdf-cover{margin-bottom:28px;padding-bottom:20px;border-bottom:2px solid #ddd}
+.pdf-cover-logo{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.pdf-cover-logo-icon{width:28px;height:28px;border-radius:7px;background:#0db050;display:flex;align-items:center;justify-content:center}
+.pdf-cover-logo-text{font-size:1rem;font-weight:900;letter-spacing:-.3px}
+.pdf-cover-logo-text .r{color:#0db050}
+.pdf-cover h1{font-size:1.6rem;font-weight:900;letter-spacing:-.5px;margin-bottom:4px}
+.pdf-cover-meta{font-size:.82rem;color:#666;margin-bottom:2px}
+.pdf-section{margin-bottom:22px}
+.pdf-section-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#888;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #eee}
+.pdf-verdict-box{border:1px solid #ddd;border-radius:8px;padding:16px 18px;margin-bottom:16px}
+.pdf-verdict-label{font-size:1.2rem;font-weight:900;margin-bottom:5px}
+.pdf-verdict-text{font-size:.82rem;color:#444;line-height:1.7}
+.pdf-table{width:100%;border-collapse:collapse}
+.pdf-table th{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#888;text-align:left;padding:6px 10px;border-bottom:2px solid #eee}
+.pdf-table td{font-size:.82rem;padding:8px 10px;border-bottom:1px solid #f0f0f0;vertical-align:top}
+.pdf-table td:last-child{font-weight:700;text-align:right}
+.pdf-table tr:last-child td{border-bottom:none;font-weight:700;font-size:.88rem}
+.pdf-two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.pdf-sub{font-size:.72rem;color:#888;margin-top:2px}
+.pdf-footer{font-size:.7rem;color:#aaa;text-align:center;margin-top:30px;padding-top:12px;border-top:1px solid #eee}
+
+@media(max-width:900px){.dg4{grid-template-columns:repeat(2,1fr)}.dg-charts{grid-template-columns:1fr}.adv-metric{grid-template-columns:1fr;gap:10px}.adv-metric-right{text-align:left}}
+@media(max-width:600px){.dg4{grid-template-columns:1fr 1fr}.dg2{grid-template-columns:1fr}.dg3{grid-template-columns:1fr}.edit-grid{grid-template-columns:1fr}.open-h1{font-size:3rem}.dg-gauges{grid-template-columns:1fr}}
 </style>
-<nav class="nav">
-  <div class="nav-brand" id="nav-home" style="cursor:pointer"><div class="nav-logo">&#127968;</div><div><h1>Deal Analyzer</h1><p>by Eli Merel</p></div></div>
-  <div class="theme-toggle" id="theme-toggle"><div class="theme-toggle-knob">☀️</div></div>
-</nav>
-<div class="outer">
-<!-- INTRO -->
-<div class="intro" id="intro">
-  <div class="intro-card">
-    <div style="font-size:48px;margin-bottom:16px">&#127968;</div>
-    <h2>Run the numbers on<br>any rental property</h2>
-    <p>Get a full investor-grade analysis — cash flow, cap rate, IRR, scenario modeling, and a clear verdict on whether the deal pencils out.</p>
-    <button class="intro-start" id="btn-start">Analyze This Deal &#8594;</button>
+</head>
+<body>
+<div class="hdr">
+  <div class="logo" onclick="goHome()">
+    <div class="logo-icon"><svg viewBox="0 0 16 16"><path d="M2 13V7l6-5 6 5v6H10V9H6v4Z"/></svg></div>
+    <div class="logo-text"><span class="r">Real</span>Verdict</div>
+  </div>
+  <div class="tog" onclick="toggleTheme()">
+    <div class="to on" id="togL">☀</div>
+    <div class="to" id="togD">☾</div>
   </div>
 </div>
-<!-- STEP DOTS -->
-<div class="wizard-header" id="wizard-header">
-  <div class="step-dots">
-    <div class="dot active" id="dot1"></div><div class="dot" id="dot2"></div><div class="dot" id="dot3"></div><div class="dot" id="dot4"></div>
-  </div>
-  <div class="wizard-title" id="wizard-title">Step 1 of 4</div>
-</div>
-<!-- STEP 1 -->
-<div class="wizard-card" id="wc1">
-  <div class="wizard-card-header"><div class="step-num-badge">1</div><h3>The Property</h3><p>Enter the subject property details</p></div>
-  <div class="wizard-card-body">
-    <div class="field full"><label>Property Address</label><input id="address" placeholder="e.g. 123 Oak Ave, Edison, NJ" oninput="calc()"></div>
-    <div class="field-grid">
-      <div class="field"><label>Property Type</label><select id="proptype" onchange="calc()"><option value="single">Single Family</option><option value="multi2" selected>Duplex (2 units)</option><option value="multi3">3 Units</option><option value="multi4">4 Units</option><option value="condo">Condo / Townhouse</option></select></div>
-      <div class="field"><label>Year Built <span class="tip">?<span class="tip-text">Older homes need larger repair budgets</span></span></label><input id="yearbuilt" type="number" placeholder="e.g. 1990" oninput="calc()"></div>
-      <div class="field"><label>Square Footage</label><input id="sqft" type="number" placeholder="e.g. 1800" oninput="calc()"></div>
-      <div class="field"><label>Bedrooms</label><input id="beds" type="number" placeholder="e.g. 4" oninput="calc()"></div>
-    </div>
-  </div>
-  <div class="wizard-card-footer"><button class="btn-back" id="btn-back0">← Back</button><div style="display:flex;gap:8px"><button class="btn-skip" id="btn-skip1">Skip →</button><button class="btn-next" id="btn-back2">Next &#8594;</button></div></div>
-</div>
-<!-- STEP 2 -->
-<div class="wizard-card" id="wc2">
-  <div class="wizard-card-header"><div class="step-num-badge">2</div><h3>Purchase &amp; Financing</h3><p>How much and how you&#39;re paying for it</p></div>
-  <div class="wizard-card-body">
-    <div class="field"><label>Purchase Price <span class="tip">?<span class="tip-text">The agreed sale price &#8212; not list price. Negotiate!</span></span></label><div class="prefix-wrap"><span class="prefix">$</span><input id="price" type="number" value="350000" oninput="calc()"></div></div>
-    <div class="slider-field"><label>Down Payment <span class="slider-val" id="dp-label">20%</span></label><input type="range" id="dp" min="3" max="40" value="20" step="1" oninput="document.getElementById('dp-label').textContent=this.value+'%';updateSlider(this);calc()"><div class="hint" style="font-size:10px;color:#94a3b8;margin-top:4px">Investment property typically requires 20&#8211;25% down</div></div>
-    <div class="slider-field"><label>Interest Rate <span class="slider-val" id="rate-label">7.0%</span></label><input type="range" id="rate" min="3" max="12" value="7" step="0.1" oninput="document.getElementById('rate-label').textContent=parseFloat(this.value).toFixed(1)+'%';updateSlider(this);calc()"><div class="hint" style="font-size:10px;color:#94a3b8;margin-top:4px">Shop at least 3 lenders before committing</div></div>
-    <div class="field-grid">
-      <div class="field"><label>Loan Term</label><select id="term" onchange="calc()"><option value="30" selected>30 years</option><option value="20">20 years</option><option value="15">15 years</option></select></div>
-      <div class="field"><label>Closing Costs</label><div class="prefix-wrap"><span class="prefix">$</span><input id="closing" type="number" value="8000" oninput="calc()"></div><div class="hint" style="font-size:10px;color:#94a3b8;margin-top:2px">~2&#8211;3% of price</div></div>
-      <div class="field"><label>Rehab / Repairs</label><div class="prefix-wrap"><span class="prefix">$</span><input id="rehab" type="number" value="5000" oninput="calc()"></div></div>
-    </div>
-    <div class="mini-results">
-      <div class="mini-pill"><div class="mini-label">Down Payment</div><div class="mini-val" id="r-dp">&#8212;</div></div>
-      <div class="mini-pill"><div class="mini-label">Loan Amount</div><div class="mini-val" id="r-loan">&#8212;</div></div>
-      <div class="mini-pill"><div class="mini-label">Mo. Mortgage</div><div class="mini-val" id="r-mtg">&#8212;</div></div>
-      <div class="mini-pill"><div class="mini-label">Cash Needed</div><div class="mini-val" id="r-totalin">&#8212;</div></div>
-    </div>
-  </div>
-  <div class="wizard-card-footer"><button class="btn-back" id="btn-back1">&#8592; Back</button><button class="btn-next" id="btn-back3">Next &#8594;</button></div>
-</div>
-<!-- STEP 3 -->
-<div class="wizard-card" id="wc3">
-  <div class="wizard-card-header"><div class="step-num-badge">3</div><h3>Rental Income</h3><p>Projected rental income for this property</p></div>
-  <div class="wizard-card-body">
-    <div class="info-pill">&#128161; Check Zillow or Facebook Marketplace for local rent comps first</div>
-    <div class="field-grid">
-      <div class="field"><label>Unit 1 Monthly Rent</label><div class="prefix-wrap"><span class="prefix">$</span><input id="rent1" type="number" value="1800" oninput="calc()"></div></div>
-      <div class="field"><label>Unit 2 Monthly Rent</label><div class="prefix-wrap"><span class="prefix">$</span><input id="rent2" type="number" value="1600" oninput="calc()"></div><div class="hint" style="font-size:10px;color:#94a3b8;margin-top:2px">$0 if single family</div></div>
-      <div class="field"><label>Unit 3 Monthly Rent</label><div class="prefix-wrap"><span class="prefix">$</span><input id="rent3" type="number" value="0" oninput="calc()"></div></div>
-      <div class="field"><label>Other Income</label><div class="prefix-wrap"><span class="prefix">$</span><input id="other" type="number" value="50" oninput="calc()"></div><div class="hint" style="font-size:10px;color:#94a3b8;margin-top:2px">Parking, laundry, etc.</div></div>
-    </div>
-    <div class="slider-field"><label>Vacancy Rate <span class="slider-val" id="vac-label">5%</span></label><input type="range" id="vacancy" min="0" max="20" value="5" step="1" oninput="document.getElementById('vac-label').textContent=this.value+'%';updateSlider(this);calc()"><div class="hint" style="font-size:10px;color:#94a3b8;margin-top:4px">5% = ~18 days empty/year. Use 8&#8211;10% to be safe.</div></div>
-    <div class="mini-results" style="grid-template-columns:repeat(3,1fr)">
-      <div class="mini-pill"><div class="mini-label">Gross Monthly</div><div class="mini-val" id="r-grossmo">&#8212;</div></div>
-      <div class="mini-pill"><div class="mini-label">Gross Annual</div><div class="mini-val" id="r-grossann">&#8212;</div></div>
-      <div class="mini-pill"><div class="mini-label">After Vacancy</div><div class="mini-val" id="r-egi">&#8212;</div></div>
-    </div>
-  </div>
-  <div class="wizard-card-footer"><button class="btn-back" id="btn-back-s3">&#8592; Back</button><button class="btn-next" id="btn-s4">Next &#8594;</button></div>
-</div>
-<!-- STEP 4 -->
-<div class="wizard-card" id="wc4">
-  <div class="wizard-card-header"><div class="step-num-badge">4</div><h3>Annual Expenses</h3><p>Annual operating expenses — be conservative</p></div>
-  <div class="wizard-card-body">
-    <div class="warn-pill">&#9888;&#65039; Underestimating expenses is the #1 mistake new investors make</div>
-    <div class="field-grid">
-      <div class="field"><label>Property Taxes <span class="tip">?<span class="tip-text">NJ avg ~2% of value/yr.</span></span></label><div class="prefix-wrap"><span class="prefix">$</span><input id="tax" type="number" value="7200" oninput="calc()"></div></div>
-      <div class="field"><label>Insurance <span class="tip">?<span class="tip-text">Landlord policy &#8212; not homeowner&#39;s.</span></span></label><div class="prefix-wrap"><span class="prefix">$</span><input id="ins" type="number" value="1800" oninput="calc()"></div></div>
-      <div class="field"><label>Maintenance <span class="tip">?<span class="tip-text">~1% of purchase price per year.</span></span></label><div class="prefix-wrap"><span class="prefix">$</span><input id="maint" type="number" value="3500" oninput="calc()"></div></div>
-      <div class="field"><label>CapEx Reserve <span class="tip">?<span class="tip-text">Roof, HVAC, water heater, plumbing. Min $200/mo.</span></span></label><div class="prefix-wrap"><span class="prefix">$</span><input id="capex" type="number" value="2400" oninput="calc()"></div></div>
-      <div class="field"><label>Property Mgmt <span class="tip">?<span class="tip-text">~8&#8211;10% of gross rent if hired. $0 if self-managing.</span></span></label><div class="prefix-wrap"><span class="prefix">$</span><input id="mgmt" type="number" value="0" oninput="calc()"></div></div>
-      <div class="field"><label>Utilities <span class="tip">?<span class="tip-text">Only if YOU pay &#8212; not tenants.</span></span></label><div class="prefix-wrap"><span class="prefix">$</span><input id="util" type="number" value="0" oninput="calc()"></div></div>
-      <div class="field"><label>Landscaping / Snow</label><div class="prefix-wrap"><span class="prefix">$</span><input id="landscape" type="number" value="600" oninput="calc()"></div><div class="hint" style="font-size:10px;color:#94a3b8;margin-top:2px">NJ winters &#8212; don&#39;t skip</div></div>
-      <div class="field"><label>Accounting / LLC <span class="tip">?<span class="tip-text">Annual tax prep + LLC filing. Typically $500&#8211;1000/yr.</span></span></label><div class="prefix-wrap"><span class="prefix">$</span><input id="legal" type="number" value="500" oninput="calc()"></div></div>
-    </div>
-    <div class="mini-results">
-      <div class="mini-pill"><div class="mini-label">Total/Year</div><div class="mini-val" id="r-totalexp">&#8212;</div></div>
-      <div class="mini-pill"><div class="mini-label">Per Month</div><div class="mini-val" id="r-moexp">&#8212;</div></div>
-      <div class="mini-pill"><div class="mini-label">Expense Ratio</div><div class="mini-val" id="r-expratio">&#8212;</div></div>
-      <div class="mini-pill"><div class="mini-label">NOI</div><div class="mini-val" id="r-noi">&#8212;</div></div>
-    </div>
-  </div>
-  <div class="wizard-card-footer"><button class="btn-back" id="btn-back-s4">&#8592; Back</button><button class="btn-next" id="btn-results" style="background:linear-gradient(135deg,var(--green),#15803d)">See My Results &#8594;</button></div>
-</div>
-<!-- RESULTS -->
-<div class="results-screen" id="results-screen">
-  <div id="verdict-box" class="verdict-hero waiting"><div class="verdict-icon">&#9203;</div><div><div class="verdict-title" id="v-title">Calculating...</div><div class="verdict-sub" id="v-sub">Your analysis is loading</div></div></div>
-  <div class="kpi-grid">
-    <div class="kpi neutral" id="kpi-cf-card"><div class="kpi-label">Monthly Cash Flow</div><div class="kpi-val" id="kpi-cf">&#8212;</div><div class="kpi-sub">after debt service</div></div>
-    <div class="kpi neutral" id="kpi-coc-card"><div class="kpi-label">Cash-on-Cash Return</div><div class="kpi-val" id="kpi-coc">&#8212;</div><div class="kpi-sub">target 8%+</div></div>
-    <div class="kpi neutral" id="kpi-cap-card"><div class="kpi-label">Cap Rate</div><div class="kpi-val" id="kpi-cap">&#8212;</div><div class="kpi-sub">target 6%+ for NJ</div></div>
-    <div class="kpi neutral" id="kpi-irr-card"><div class="kpi-label">5-Year IRR</div><div class="kpi-val" id="kpi-irr">&#8212;</div><div class="kpi-sub">target 12%+</div></div>
-  </div>
-  <div class="results-card">
-    <div class="results-card-title">Annual Breakdown</div>
-    <div class="data-row"><span class="data-label">Effective Gross Income</span><span class="data-val blue" id="d-egi">&#8212;</span></div>
-    <div class="data-row"><span class="data-label">Operating Expenses</span><span class="data-val neg" id="d-exp">&#8212;</span></div>
-    <div class="data-row"><span class="data-label">Net Operating Income (NOI)</span><span class="data-val" id="d-noi">&#8212;</span></div>
-    <div class="data-row"><span class="data-label">Mortgage (annual)</span><span class="data-val neg" id="d-mtg">&#8212;</span></div>
-    <div class="data-row total"><span class="data-label" style="font-weight:700;color:var(--text)">Net Cash Flow / yr</span><span class="data-val" id="d-annualcf" style="font-size:16px">&#8212;</span></div>
-  </div>
-  <div class="results-card">
-    <div class="results-card-title">Key Ratios</div>
-    <div class="data-row"><span class="data-label">GRM <span class="tip">?<span class="tip-text">Price &#247; Annual Rent. Under 12x is good in NJ.</span></span></span><span class="data-val" id="d-grm">&#8212;</span></div>
-    <div class="data-row"><span class="data-label">DSCR <span class="tip">?<span class="tip-text">NOI &#247; Annual Mortgage. Lenders want 1.25+.</span></span></span><span class="data-val" id="d-dscr">&#8212;</span></div>
-    <div class="data-row"><span class="data-label">Break-Even Rent <span class="tip">?<span class="tip-text">Minimum monthly rent to cover all costs.</span></span></span><span class="data-val warn" id="d-be">&#8212;</span></div>
-    <div class="data-row"><span class="data-label">Price / Sq Ft</span><span class="data-val blue" id="d-ppsf">&#8212;</span></div>
-  </div>
-  <!-- PLAYGROUND -->
-  <div class="playground">
-    <div class="playground-header"><h4>&#127923; Tweak Any Number &#8212; Results Update Instantly</h4><p>Adjust these to stress-test the deal before you commit</p></div>
-    <div class="playground-body">
-      <div class="play-grid">
-        <div class="play-field"><label>Purchase Price <span id="pl-price-lbl">$350,000</span></label><input type="range" id="pl-price" min="100000" max="800000" value="350000" step="5000" oninput="plSync('price',this.value,'pl-price-lbl','$');updateSlider(this);calc()"></div>
-        <div class="play-field"><label>Down Payment <span id="pl-dp-lbl">20%</span></label><input type="range" id="pl-dp" min="3" max="40" value="20" step="1" oninput="plSyncPct('dp',this.value,'pl-dp-lbl','dp-label');updateSlider(this);updateSlider(document.getElementById('dp'));calc()"></div>
-        <div class="play-field"><label>Interest Rate <span id="pl-rate-lbl">7.0%</span></label><input type="range" id="pl-rate" min="3" max="12" value="7" step="0.1" oninput="const v=parseFloat(this.value).toFixed(1);document.getElementById('pl-rate-lbl').textContent=v+'%';document.getElementById('rate').value=this.value;document.getElementById('rate-label').textContent=v+'%';updateSlider(this);updateSlider(document.getElementById('rate'));calc()"></div>
-        <div class="play-field"><label>Unit 1 Rent <span id="pl-rent-lbl">$1,800</span></label><input type="range" id="pl-rent1" min="500" max="5000" value="1800" step="50" oninput="plSync('rent1',this.value,'pl-rent-lbl','$');updateSlider(this);calc()"></div>
-        <div class="play-field"><label>Vacancy Rate <span id="pl-vac-lbl">5%</span></label><input type="range" id="pl-vacancy" min="0" max="20" value="5" step="1" oninput="plSyncPct('vacancy',this.value,'pl-vac-lbl','vac-label');updateSlider(this);updateSlider(document.getElementById('vacancy'));calc()"></div>
-        <div class="play-field"><label>Property Taxes <span id="pl-tax-lbl">$7,200</span></label><input type="range" id="pl-tax" min="1000" max="30000" value="7200" step="200" oninput="plSync('tax',this.value,'pl-tax-lbl','$');updateSlider(this);calc()"></div>
-      </div>
-    </div>
-  </div>
-  <!-- ACTIONS -->
-  <div class="results-card">
-    <div class="results-card-title">Export &amp; Actions</div>
-    <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
-      <button class="btn btn-full" id="deep-btn" style="background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;font-size:14px;padding:13px">&#128202; Run Full Analysis &#8594;</button>
-      <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-full" id="btn-pdf">&#128196; PDF Report</button><button class="btn btn-ghost btn-full" id="btn-xlsx">&#128202; Excel Export</button></div>
-      <button class="btn btn-ghost btn-full" id="btn-ai" style="border-color:var(--blue);color:var(--blue)">&#129302; Ask Claude to Analyze This Deal &#8594;</button>
-      <button class="btn-restart" id="btn-restart" style="margin-top:4px;width:100%;text-align:center">&#8617; Start Over with New Property</button>
-    </div>
-  </div>
-  <!-- DEEP DIVE -->
-  <div class="deep-dive" id="deep-dive" style="display:none">
-    <div class="divider-line"><span class="divider-text">Full Analysis</span></div>
-    <div style="text-align:center;margin-bottom:16px;padding:16px 0 0"><h3 style="font-size:18px;font-weight:800;color:var(--text)">&#128200; Deep Dive</h3><p style="font-size:13px;color:var(--muted);margin-top:4px">5-year projection, scenario modeling, and sensitivity analysis</p></div>
-    <div class="deep-section" id="ds6">
-      <div class="deep-section-header" id="dsh6"><div class="deep-section-badge">5</div><div><div class="deep-section-title">5-Year Projection</div><div class="deep-section-sub">Watch your investment grow year by year</div></div><div class="ds-chevron">&#8250;</div></div>
-      <div class="deep-section-body">
-        <div class="field-grid" style="margin-bottom:14px">
-          <div class="field"><label>Rent Growth %/yr</label><input id="rentg" type="number" value="3" step="0.5" oninput="calc()"><div class="hint" style="font-size:10px;color:#94a3b8;margin-top:2px">NJ avg 2&#8211;4%</div></div>
-          <div class="field"><label>Expense Growth %/yr</label><input id="expg" type="number" value="2.5" step="0.5" oninput="calc()"></div>
-          <div class="field"><label>Appreciation %/yr</label><input id="appg" type="number" value="3" step="0.5" oninput="calc()"><div class="hint" style="font-size:10px;color:#94a3b8;margin-top:2px">NJ avg 3&#8211;5%</div></div>
-          <div class="field"><label>Selling Costs %</label><input id="sellcost" type="number" value="6" step="0.5" oninput="calc()"><div class="hint" style="font-size:10px;color:#94a3b8;margin-top:2px">Agent + closing ~6%</div></div>
-        </div>
-        <div class="tbl-wrap"><table id="proj-table"></table></div>
-        <div class="mini-results" style="margin-top:14px;padding-top:14px;border-top:1.5px dashed var(--border)">
-          <div class="mini-pill"><div class="mini-label">Yr 5 Value</div><div class="mini-val blue" id="p-val5">&#8212;</div></div>
-          <div class="mini-pill"><div class="mini-label">Yr 5 Equity</div><div class="mini-val pos" id="p-eq5">&#8212;</div></div>
-          <div class="mini-pill"><div class="mini-label">5-Yr Cash Flow</div><div class="mini-val" id="p-ccf5">&#8212;</div></div>
-          <div class="mini-pill"><div class="mini-label">5-Yr IRR</div><div class="mini-val" id="p-irr">&#8212;</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="deep-section" id="ds7">
-      <div class="deep-section-header" id="dsh7"><div class="deep-section-badge">6</div><div><div class="deep-section-title">Scenario Analysis</div><div class="deep-section-sub">Bear, base, and bull case</div></div><div class="ds-chevron">&#8250;</div></div>
-      <div class="deep-section-body">
-        <div class="scen-grid" id="scen-grid"></div>
-        <div class="divider"></div>
-        <div class="sub-title">Buying vs. Renting &#8212; 5-Year Wealth Gap</div>
-        <div class="field-grid" style="margin-bottom:12px;max-width:400px">
-          <div class="field"><label>Your Current Rent/mo</label><div class="prefix-wrap"><span class="prefix">$</span><input id="curRent" type="number" value="1500" oninput="calc()"></div></div>
-          <div class="field"><label>Annual Rent Increase %</label><input id="curRentG" type="number" value="3" step="0.5" oninput="calc()"></div>
-        </div>
-        <div id="rvb-rows"></div>
-      </div>
-    </div>
-    <div class="deep-section" id="ds8">
-      <div class="deep-section-header" id="dsh8"><div class="deep-section-badge">7</div><div><div class="deep-section-title">Sensitivity Table</div><div class="deep-section-sub">How returns shift across different rents and prices</div></div><div class="ds-chevron">&#8250;</div></div>
-      <div class="deep-section-body">
-        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Each cell = cash-on-cash at that rent + price. <span style="background:var(--green-light);color:var(--green);padding:1px 8px;border-radius:99px;font-weight:700">Green 8%+</span> <span style="background:var(--amber-light);color:var(--amber);padding:1px 8px;border-radius:99px;font-weight:700">Yellow 4&#8211;7%</span> <span style="background:var(--red-light);color:var(--red);padding:1px 8px;border-radius:99px;font-weight:700">Red under 4%</span></p>
-        <div class="tbl-wrap"><table class="sens-table" id="sens-table"></table></div>
-      </div>
-    </div>
-  </div>
-</div><!-- /results -->
-</div><!-- /outer -->
-<div class="sticky-bar" id="sticky-bar">
-  <div class="sticky-inner">
-    <div class="sticky-left"><div class="sticky-label">Monthly Cash Flow</div><div class="sticky-val" id="bar-cf" style="color:var(--muted)">&#8212;</div></div>
-    <div class="sticky-right">
-      <div class="sticky-stat"><div class="sticky-stat-label">Cap Rate</div><div class="sticky-stat-val" id="bar-cap">&#8212;</div></div>
-      <div class="sticky-stat"><div class="sticky-stat-label">Cash-on-Cash</div><div class="sticky-stat-val" id="bar-coc">&#8212;</div></div>
-      <button class="sticky-pill waiting" id="bar-pill">Analyzing...</button>
-    </div>
-  </div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
 
-</script>
+<div id="cft"></div>
+
+<div class="mover" id="pdfModal">
+  <div class="modal">
+    <h3>Export investor report</h3>
+    <p>Generates a clean PDF — no charts or widgets, just the numbers laid out professionally.</p>
+    <input type="text" id="pdfProp" placeholder="Property name or address" maxlength="80">
+    <div class="modal-btns">
+      <button class="btn btn-g" style="padding:10px" onclick="$('pdfModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-p" style="padding:10px" onclick="doPrint()">Export PDF</button>
+    </div>
+  </div>
+</div>
+
+<div id="opening" class="screen active">
+  <div class="open-hero" id="ohero">
+    <div class="open-h1"><span class="r">Real</span>Verdict</div>
+    <div class="open-sub">The professional rental property analyzer.<br>Built for serious investors.</div>
+    <div class="open-note">All auto-filled values are estimates — clearly marked, always adjustable.</div>
+  </div>
+  <button class="open-cta" id="octa" onclick="startWizard()">Analyze a property →</button>
+  <div class="open-by">by Eli Merel</div>
+</div>
+
+<div id="wizard" class="screen">
+  <div class="prog" id="prog"></div>
+  <div class="wb" id="wb"></div>
+</div>
+
+<div id="results"></div>
+
 <script>
-let state={},deepOpen=false;
-function g(id){return parseFloat(document.getElementById(id)?.value)||0}
-function gs(id){return document.getElementById(id)?.value||""}
-function money(n,dec=0){const a=Math.abs(n);return(n<0?"-$":"$")+a.toLocaleString("en-US",{minimumFractionDigits:dec,maximumFractionDigits:dec})}
-function pct(n,dec=1){return isFinite(n)?n.toFixed(dec)+"%":"--"}
-function mult(n){return isFinite(n)&&n>0?n.toFixed(1)+"x":"--"}
-function kpiClass(v,t){
-  if(t==="cf")return v>0?"good":v<0?"bad":"warn";
-  if(t==="coc")return v>=8?"good":v>=3?"warn":"bad";
-  if(t==="cap")return v>=6?"good":v>=4?"warn":"bad";
-  if(t==="irr")return v>=12?"good":v>=8?"warn":"bad";
-  if(t==="dscr")return v>=1.25?"good":v>=1.0?"warn":"bad";
-  return "neutral";
-}
-function setKpi(id,val,type){const el=document.getElementById(id),card=document.getElementById(id+"-card");if(el)el.textContent=val;if(card)card.className="kpi "+kpiClass(parseFloat(val),type)}
-function setDV(id,txt,cls){const el=document.getElementById(id);if(!el)return;el.textContent=txt;if(cls)el.className="data-val "+cls}
-function updateSlider(el){const min=parseFloat(el.min),max=parseFloat(el.max),val=parseFloat(el.value);el.style.setProperty("--pct",((val-min)/(max-min)*100)+"%")}
-function plSync(inputId,val,labelId,prefix){document.getElementById(inputId).value=val;const n=parseFloat(val);document.getElementById(labelId).textContent=prefix==="$"?"$"+n.toLocaleString("en-US",{maximumFractionDigits:0}):n+"%"}
-function plSyncPct(inputId,val,labelId,sliderLabelId){document.getElementById(inputId).value=val;document.getElementById(labelId).textContent=val+"%";if(sliderLabelId)document.getElementById(sliderLabelId).textContent=val+"%"}
-function startWizard(){document.getElementById("intro").style.display="none";document.getElementById("wizard-header").classList.add("show");goStep(1)}
-function goIntro(){document.getElementById("intro").style.display="block";document.getElementById("wizard-header").classList.remove("show");document.querySelectorAll(".wizard-card").forEach(c=>c.classList.remove("active"));document.getElementById("results-screen").classList.remove("show");document.getElementById("sticky-bar").classList.remove("show")}
-function goStep(n){document.querySelectorAll(".wizard-card").forEach(c=>c.classList.remove("active"));document.getElementById("results-screen").classList.remove("show");document.getElementById("sticky-bar").classList.remove("show");document.getElementById("wc"+n).classList.add("active");updateDots(n);document.getElementById("wizard-title").textContent="Step "+n+" of 4";window.scrollTo({top:0,behavior:"smooth"});calc()}
-function updateDots(active){for(let i=1;i<=4;i++){const d=document.getElementById("dot"+i);d.classList.remove("active","done");if(i<active)d.classList.add("done");else if(i===active)d.classList.add("active")}}
-function showResults(){document.querySelectorAll(".wizard-card").forEach(c=>c.classList.remove("active"));document.getElementById("wizard-header").classList.remove("show");document.getElementById("results-screen").classList.add("show");document.getElementById("sticky-bar").classList.add("show");window.scrollTo({top:0,behavior:"smooth"});calc()}
-function pmt(r,n,pv){return r===0?pv/n:pv*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)}
-function calcIRR(flows,g=0.1){for(let i=0;i<300;i++){let npv=0,d=0;for(let t=0;t<flows.length;t++){npv+=flows[t]/Math.pow(1+g,t);d-=t*flows[t]/Math.pow(1+g,t+1)}if(Math.abs(d)<1e-12)break;const ng=g-npv/d;if(Math.abs(ng-g)<1e-9)return ng;g=ng}return g}
-function sensColor(v){if(v>=0.08)return["#f0fdf4","#16a34a"];if(v>=0.04)return["#fffbeb","#d97706"];return["#fef2f2","#dc2626"]}
-function openDeepDive(){deepOpen=true;document.getElementById("deep-dive").style.display="block";document.getElementById("deep-btn").textContent="Full Analysis Open -- scroll down";document.getElementById("deep-dive").scrollIntoView({behavior:"smooth",block:"start"});calc()}
-function toggleDS(id){document.getElementById(id).classList.toggle("collapsed")}
-function calc(){
-  const price=g("price"),dpPct=g("dp")/100,ratePct=g("rate")/100;
-  const term=parseInt(gs("term"))||30;
-  const closing=g("closing"),rehab=g("rehab"),sqft=g("sqft");
-  const rent1=g("rent1"),rent2=g("rent2"),rent3=g("rent3"),oth=g("other"),vacPct=g("vacancy")/100;
-  const tax=g("tax"),ins=g("ins"),maint=g("maint"),capex=g("capex"),mgmt=g("mgmt"),util=g("util"),land=g("landscape"),legal=g("legal");
-  const rentG=g("rentg")/100,expG=g("expg")/100,appG=g("appg")/100,sellC=g("sellcost")/100;
-  const dp=price*dpPct,loan=price-dp,totalIn=dp+closing+rehab;
-  const mRate=ratePct/12,nPay=term*12;
-  const mtg=price>0?pmt(mRate,nPay,loan):0,annMtg=mtg*12;
-  const grossMo=rent1+rent2+rent3+oth,grossAnn=grossMo*12;
-  const vacLoss=grossAnn*vacPct,egi=grossAnn-vacLoss;
-  const totalExp=tax+ins+maint+capex+mgmt+util+land+legal;
-  const noi=egi-totalExp,annCF=noi-annMtg,moCF=annCF/12;
-  const capRate=price>0?(noi/price)*100:0;
-  const grm=grossAnn>0?price/grossAnn:0;
-  const coc=totalIn>0?(annCF/totalIn)*100:0;
-  const dscr=annMtg>0?noi/annMtg:0;
-  const be=(totalExp+annMtg)/12;
-  const expratio=grossAnn>0?(totalExp/grossAnn)*100:0;
-  const ppsf=sqft>0?price/sqft:0;
-  let projData=[],cumCF=0;
-  for(let y=1;y<=5;y++){
-    const rG=grossAnn*Math.pow(1+rentG,y-1)*(1-vacPct),rExp=totalExp*Math.pow(1+expG,y-1),rNOI=rG-rExp,rCF=rNOI-annMtg;
-    cumCF+=rCF;
-    const rVal=price*Math.pow(1+appG,y),lBal=loan>0?loan*Math.pow(0.986,y):0;
-    projData.push({egi:rG,exp:rExp,noi:rNOI,mtg:annMtg,cf:rCF,ccf:cumCF,val:rVal,lb:lBal,eq:rVal-lBal});
-  }
-  const yr5=projData[4]||{};
-  const netSale=yr5.val?(yr5.val*(1-sellC)-yr5.lb):0;
-  const irrFlows=[-totalIn,...projData.map((d,i)=>i===4?d.cf+netSale:d.cf)];
-  const irrVal=totalIn>0?calcIRR(irrFlows)*100:0;
-  state={price,dp,loan,totalIn,mtg,grossMo,grossAnn,vacLoss,egi,totalExp,noi,annMtg,annCF,moCF,capRate,grm,coc,dscr,be,expratio,ppsf,projData,yr5,netSale,irrVal,cumCF,ratePct,mRate,nPay,dpPct,closing,rehab,vacPct};
-  const sm=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
-  sm("r-dp",money(dp));sm("r-loan",money(loan));sm("r-mtg",money(mtg,2));sm("r-totalin",money(totalIn));
-  sm("r-grossmo",money(grossMo));sm("r-grossann",money(grossAnn));sm("r-egi",money(egi));
-  sm("r-totalexp",money(totalExp));sm("r-moexp",money(totalExp/12));sm("r-expratio",pct(expratio));sm("r-noi",money(noi));
-  const vb=document.getElementById("verdict-box"),vt=document.getElementById("v-title"),vs=document.getElementById("v-sub");
-  if(!vb)return;
-  if(coc>=10){vb.className="verdict-hero great";vt.textContent="Strong Deal -- Go for it!";vs.textContent=pct(coc)+" cash-on-cash. Well above average. Verify rent comps and move quickly."}
-  else if(coc>=6){vb.className="verdict-hero good";vt.textContent="Solid Deal -- Good numbers";vs.textContent=pct(coc)+" cash-on-cash. Above average for NJ. Do your due diligence."}
-  else if(coc>=3){vb.className="verdict-hero ok";vt.textContent="Marginal -- Numbers are thin";vs.textContent=pct(coc)+" cash-on-cash. Try negotiating the price down or increasing rents."}
-  else if(annCF>0){vb.className="verdict-hero bad";vt.textContent="Weak Deal -- Keep looking";vs.textContent="Only "+pct(coc)+" cash-on-cash. Not enough return for the risk."}
-  else if(price>0){vb.className="verdict-hero bad";vt.textContent="Negative Cash Flow -- Walk Away";vs.textContent="This deal costs you "+money(Math.abs(moCF),2)+" out of pocket every month."}
-  else{vb.className="verdict-hero waiting";vt.textContent="Enter your deal details";vs.textContent="Go back and fill in the 4 steps to see your analysis."}
-  setKpi("kpi-cf",money(moCF,2),"cf");setKpi("kpi-coc",pct(coc),"coc");setKpi("kpi-cap",pct(capRate),"cap");setKpi("kpi-irr",pct(irrVal),"irr");
-  setDV("d-egi",money(egi),"blue");setDV("d-exp","-"+money(totalExp),"neg");setDV("d-noi",money(noi),noi>0?"pos":"neg");
-  setDV("d-mtg","-"+money(annMtg),"neg");setDV("d-annualcf",money(annCF),annCF>=0?"pos":"neg");
-  setDV("d-grm",mult(grm),"blue");setDV("d-dscr",mult(dscr),kpiClass(dscr,"dscr")==="good"?"pos":kpiClass(dscr,"dscr")==="bad"?"neg":"warn");
-  setDV("d-be",money(be,2),"warn");setDV("d-ppsf",sqft?money(ppsf,2):"--","blue");
-  if(price>0){
-    const bc=document.getElementById("bar-cf");if(bc){bc.textContent=money(moCF,2)+"/mo";bc.style.color=moCF>=0?"var(--green)":"var(--red)"}
-    const bcp=document.getElementById("bar-cap");if(bcp){bcp.textContent=pct(capRate);bcp.style.color=capRate>=6?"var(--green)":capRate>=4?"var(--amber)":"var(--red)"}
-    const bcc=document.getElementById("bar-coc");if(bcc){bcc.textContent=pct(coc);bcc.style.color=coc>=8?"var(--green)":coc>=3?"var(--amber)":"var(--red)"}
-    const pill=document.getElementById("bar-pill");
-    if(pill){if(coc>=6){pill.className="sticky-pill great";pill.textContent="Its a Go!"}else if(coc>=3){pill.className="sticky-pill ok";pill.textContent="Marginal"}else{pill.className="sticky-pill bad";pill.textContent="Walk Away"}}
-  }
-  if(!deepOpen)return;
-  const rows=[{l:"Effective Gross Income",k:"egi"},{l:"Operating Expenses",k:"exp",neg:true},{l:"NOI",k:"noi",hl:true},{l:"Mortgage",k:"mtg",neg:true},{l:"Net Cash Flow",k:"cf",hl:true,color:true},{l:"Cumulative Cash Flow",k:"ccf",color:true},{l:"Property Value",k:"val"},{l:"Equity",k:"eq",hl:true}];
-  const th="<thead><tr><th>Metric</th>"+projData.map((_,i)=>"<th>Year "+(i+1)+"</th>").join("")+"</tr></thead>";
-  const tb="<tbody>"+rows.map(r=>{const cells=projData.map(d=>{const v=d[r.k];let s=r.color?(v>=0?"color:var(--green)":"color:var(--red)"):r.neg?"color:var(--muted)":"";return "<td style='"+s+"'>"+(r.neg?"(":"")+money(Math.abs(v))+(r.neg?")":"")+"</td>"}).join("");return "<tr"+(r.hl?" class='hl'":"")+"><td>"+r.l+"</td>"+cells+"</tr>"}).join("")+"</tbody>";
-  document.getElementById("proj-table").innerHTML=th+tb;
-  if(yr5.val){sm("p-val5",money(yr5.val));sm("p-eq5",money(yr5.eq));const c5=document.getElementById("p-ccf5");c5.textContent=money(cumCF);c5.className="mini-val "+(cumCF>=0?"pos":"neg");const i5=document.getElementById("p-irr");i5.textContent=pct(irrVal);i5.className="mini-val "+(irrVal>=12?"pos":irrVal>=8?"warn":"neg")}
-  const scenarios=[{n:"Bear Case",cls:"bear",rg:0.01,ag:0.01,vac:0.10},{n:"Base Case",cls:"base",rg:rentG,ag:appG,vac:vacPct},{n:"Bull Case",cls:"bull",rg:0.05,ag:0.05,vac:0.02}];
-  document.getElementById("scen-grid").innerHTML=scenarios.map(s=>{let sCum=0,sFlows=[-totalIn];for(let y=1;y<=5;y++){const sr=grossAnn*Math.pow(1+s.rg,y-1)*(1-s.vac),se=totalExp*Math.pow(1+expG,y-1),cf=sr-se-annMtg;sCum+=cf;const sv=price*Math.pow(1+s.ag,y),sl=loan>0?loan*Math.pow(0.986,y):0;sFlows.push(y===5?cf+sv*(1-sellC)-sl:cf)}const sv5=price*Math.pow(1+s.ag,5),sl5=loan>0?loan*Math.pow(0.986,5):0,sIRR=totalIn>0?calcIRR(sFlows)*100:0,sCoc=totalIn>0?((grossAnn*(1-s.vac)-totalExp-annMtg)/totalIn)*100:0;return "<div class='scen "+s.cls+"'><div class='scen-title'>"+s.n+"</div><div class='scen-row'><span>Rent growth/yr</span><span class='sv'>"+pct(s.rg*100,1)+"</span></div><div class='scen-row'><span>Appreciation/yr</span><span class='sv'>"+pct(s.ag*100,1)+"</span></div><div class='scen-row'><span>Yr 5 value</span><span class='sv'>"+money(sv5)+"</span></div><div class='scen-row'><span>Yr 5 equity</span><span class='sv'>"+money(sv5-sl5)+"</span></div><div class='scen-row'><span>5-yr cash flow</span><span class='sv'>"+money(sCum)+"</span></div><div class='scen-row'><span>Cash-on-cash</span><span class='sv'>"+pct(sCoc)+"</span></div><div class='scen-row'><span>5-yr IRR</span><span class='sv'>"+pct(sIRR)+"</span></div></div>"}).join("");
-  const curRent=g("curRent"),curRG=g("curRentG")/100;let totalRentPaid=0;for(let y=0;y<5;y++)totalRentPaid+=curRent*12*Math.pow(1+curRG,y);const buyW=(yr5.eq||0)+cumCF;
-  document.getElementById("rvb-rows").innerHTML=[["If you BUY -- Year 5 equity",money(yr5.eq||0),true,false],["If you BUY -- 5-yr cumulative cash flow",money(cumCF),cumCF>=0,false],["If you BUY -- Total wealth built",money(buyW),buyW>=0,true],["If you RENT -- 5 years of rent paid","-"+money(totalRentPaid),false,false],["Your advantage from buying",money(buyW+totalRentPaid),(buyW+totalRentPaid)>=0,true]].map(([l,v,pos,bold])=>"<div class='data-row'><span class='data-label'>"+l+"</span><span class='data-val "+(pos?"pos":"neg")+"' style='"+(bold?"font-size:15px":"")+">"+v+"</span></div>").join("");
-  const rents=[2000,2500,3000,3500,4000,4500,5000],prices=[250000,300000,350000,400000,450000,500000,550000];
-  let shtml="<thead><tr><th>Price / Rent</th>"+rents.map(r=>"<th>$"+(r/1000).toFixed(1)+"k</th>").join("")+"</tr></thead><tbody>";
-  prices.forEach(p=>{shtml+="<tr><th style='background:#f8fafc;color:var(--muted);text-align:left;font-weight:700'>$"+(p/1000).toFixed(0)+"k</th>";rents.forEach(r=>{const dpA=p*dpPct,lA=p-dpA,tA=dpA+closing+rehab,mA=pmt(mRate,nPay,lA),giA=r*12*(1-vacPct),cfA=giA-totalExp-mA*12,cA=tA>0?cfA/tA:0,[bg,tc]=sensColor(cA);shtml+="<td style='background:"+bg+";color:"+tc+"'>"+pct(cA*100)+"</td>"});shtml+="</tr>"});
-  document.getElementById("sens-table").innerHTML=shtml+"</tbody>";
-}
-function openAI(){const s=state,addr=document.getElementById("address")?.value||"this property";const prompt="I am analyzing a real estate investment deal.\n\nProperty: "+addr+"\nPurchase Price: "+money(s.price||0)+"\nTotal Cash Invested: "+money(s.totalIn||0)+"\nMonthly Mortgage: "+money(s.mtg||0,2)+"\n\nNOI: "+money(s.noi||0)+"/yr\nAnnual Cash Flow: "+money(s.annCF||0)+"/yr\nMonthly Cash Flow: "+money(s.moCF||0,2)+"/mo\n\nCap Rate: "+pct(s.capRate||0,2)+"\nCash-on-Cash: "+pct(s.coc||0,2)+"\nDSCR: "+mult(s.dscr||0)+"\n5-Year IRR: "+pct(s.irrVal||0,2)+"\n\nPlease give me: 1) Verdict on this deal 2) Strongest and weakest parts 3) What to negotiate 4) Whether these numbers make sense for NJ/NYC";window.open("https://claude.ai/new?q="+encodeURIComponent(prompt),"_blank")}
-function exportPDF(){
-  const s=state,addr=document.getElementById("address")?.value||"Property Analysis";
-  const html="<!DOCTYPE html><html><head><meta charset=UTF-8><title>"+addr+"</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:10.5px;color:#0f172a;padding:20px 24px;background:#fff}.header{border-bottom:3px solid #3b82f6;padding-bottom:10px;margin-bottom:14px}.header h1{font-size:18px;font-weight:800;margin-bottom:2px}.sub{font-size:11px;color:#64748b}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}.kpi{border-radius:8px;padding:8px;text-align:center;border:1.5px solid}.good{background:#f0fdf4;border-color:#86efac;color:#16a34a}.bad{background:#fef2f2;border-color:#fca5a5;color:#dc2626}.warn{background:#fffbeb;border-color:#fcd34d;color:#d97706}.kpi-l{font-size:9px;text-transform:uppercase;margin-bottom:4px;font-weight:700}.kpi-v{font-size:16px;font-weight:800}h2{font-size:11px;font-weight:800;color:#0f172a;margin:10px 0 6px;padding-bottom:4px;border-bottom:2px solid #e2e8f0}table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px}th{background:#f8fafc;color:#64748b;padding:5px 8px;text-align:left;font-weight:700;font-size:9px;text-transform:uppercase;border-bottom:1px solid #e2e8f0}th.r{text-align:right}td{padding:4px 8px;border-bottom:1px solid #f1f5f9}td.r{text-align:right;font-weight:700}tr.hl td{background:#eff6ff;font-weight:800;color:#1d4ed8}.pos{color:#16a34a}.neg{color:#dc2626}.footer{margin-top:12px;font-size:9px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px;text-align:center}@media print{body{padding:0}}@media screen{body{max-width:780px;margin:0 auto;padding:24px;font-size:11px}.header{padding-bottom:12px;margin-bottom:16px}}</style></head><body><div class=header><h1>"+addr+"</h1><div class=sub>Real Estate Deal Analysis - "+new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})+"</div></div><div class=kpis><div class='kpi "+(+(s.moCF||0)>=0?"good":"bad")+"'><div class=kpi-l>Monthly Cash Flow</div><div class=kpi-v>"+money(s.moCF||0,2)+"</div></div><div class='kpi "+((s.coc||0)>=8?"good":(s.coc||0)>=3?"warn":"bad")+"'><div class=kpi-l>Cash-on-Cash</div><div class=kpi-v>"+pct(s.coc||0)+"</div></div><div class='kpi "+((s.capRate||0)>=6?"good":(s.capRate||0)>=4?"warn":"bad")+"'><div class=kpi-l>Cap Rate</div><div class=kpi-v>"+pct(s.capRate||0,2)+"</div></div><div class='kpi "+((s.irrVal||0)>=12?"good":(s.irrVal||0)>=8?"warn":"bad")+"'><div class=kpi-l>5-Year IRR</div><div class=kpi-v>"+pct(s.irrVal||0,2)+"</div></div></div><h2>Financing</h2><table><tr><th>Item</th><th class=r>Amount</th></tr><tr><td>Purchase Price</td><td class=r>$"+(s.price||0).toLocaleString()+"</td></tr><tr><td>Down Payment ("+((s.dpPct||0)*100).toFixed(0)+"%)</td><td class=r>$"+(s.dp||0).toLocaleString()+"</td></tr><tr><td>Loan Amount</td><td class=r>$"+(s.loan||0).toLocaleString()+"</td></tr><tr><td>Closing + Rehab</td><td class=r>$"+((s.closing||0)+(s.rehab||0)).toLocaleString()+"</td></tr><tr class=hl><td>Total Cash Required</td><td class=r>$"+(s.totalIn||0).toLocaleString()+"</td></tr><tr><td>Monthly Mortgage</td><td class=r>$"+(s.mtg||0).toFixed(2)+"</td></tr></table><h2>Income &amp; Expenses</h2><table><tr><th>Item</th><th class=r>Annual</th></tr><tr><td>Gross Rental Income</td><td class='r pos'>$"+(s.grossAnn||0).toLocaleString()+"</td></tr><tr><td>Vacancy Loss</td><td class='r neg'>($"+(s.vacLoss||0).toLocaleString()+")</td></tr><tr><td>Effective Gross Income</td><td class=r>$"+(s.egi||0).toLocaleString()+"</td></tr><tr><td>Total Operating Expenses</td><td class='r neg'>($"+(s.totalExp||0).toLocaleString()+")</td></tr><tr class=hl><td>Net Operating Income (NOI)</td><td class=r>$"+(s.noi||0).toLocaleString()+"</td></tr><tr><td>Annual Mortgage</td><td class='r neg'>($"+(s.annMtg||0).toLocaleString()+")</td></tr><tr class=hl><td>Annual Net Cash Flow</td><td class='r "+((s.annCF||0)>=0?"pos":"neg")+"'>"+(+(s.annCF||0)>=0?"$":"($")+Math.abs(s.annCF||0).toLocaleString()+((s.annCF||0)<0?")":"")+"</td></tr></table><h2>Key Ratios</h2><table><tr><th>Metric</th><th class=r>Value</th><th class=r>Target</th><th class=r>Status</th></tr><tr><td>Cap Rate</td><td class=r>"+pct(s.capRate||0,2)+"</td><td class=r>6%+</td><td class='r "+((s.capRate||0)>=6?"pos":"neg")+"'>"+((s.capRate||0)>=6?"Good":"Below target")+"</td></tr><tr><td>Cash-on-Cash</td><td class=r>"+pct(s.coc||0,2)+"</td><td class=r>8%+</td><td class='r "+((s.coc||0)>=8?"pos":(s.coc||0)>=3?"":"neg")+"'>"+((s.coc||0)>=8?"Excellent":(s.coc||0)>=3?"Marginal":"Weak")+"</td></tr><tr><td>DSCR</td><td class=r>"+mult(s.dscr||0)+"</td><td class=r>1.25x+</td><td class='r "+((s.dscr||0)>=1.25?"pos":"neg")+"'>"+((s.dscr||0)>=1.25?"Approved":"Below threshold")+"</td></tr><tr><td>5-Year IRR</td><td class=r>"+pct(s.irrVal||0,2)+"</td><td class=r>12%+</td><td class='r "+((s.irrVal||0)>=12?"pos":(s.irrVal||0)>=8?"":"neg")+"'>"+((s.irrVal||0)>=12?"Strong":(s.irrVal||0)>=8?"Decent":"Weak")+"</td></tr><tr><td>Break-Even Rent</td><td class=r>"+money(s.be||0,2)+"/mo</td><td class=r>Below market</td><td class=r>Know this before you offer</td></tr></table>"+(s.projData&&s.projData.length?"<h2>5-Year Projection</h2><table><tr><th>Metric</th>"+s.projData.map((_,i)=>"<th class=r>Year "+(i+1)+"</th>").join("")+"</tr>"+[["Net Cash Flow","cf"],["Property Value","val"],["Equity","eq"]].map(([l,k])=>"<tr"+(k==="eq"||k==="cf"?" class=hl":"")+">"+"<td>"+l+"</td>"+s.projData.map(d=>"<td class='r "+(d[k]>=0?"":"neg")+"'>$"+Math.abs(Math.round(d[k]||0)).toLocaleString()+"</td>").join("")+"</tr>").join("")+"</table>":"")+"<div class=footer>For informational purposes only. Verify all numbers independently. Consult a licensed real estate professional.</div></body></html>";
-  const w=window.open("","_blank");w.document.write(html);w.document.close();setTimeout(()=>w.print(),600);
-}
-function exportXLSX(){
-  const s=state, addr=document.getElementById("address")?.value||"Investment Property";
-  const wb=XLSX.utils.book_new();
+/* ══ CONSTANTS ══ */
+const STATES=['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+const COUNTRIES=['United States','Canada','United Kingdom','Australia','Mexico'];
+const DEF={step:0,addr:{street:'',city:'',state:'',zip:'',country:'United States'},price:0,units:1,downPct:20,rate:7.25,rents:[],taxes:0,insurance:0,maintenance:0,vacancy:0,management:0,otherExp:0,period:'mo'};
+let S=JSON.parse(JSON.stringify(DEF));
+let stepDir=1,tf1=10,tf2=10,advOpen=false,debT=null,dashR=null;
 
-  // Site color palette — matches the web app exactly
-  const NAVY="1B2A4A", NAVY2="253A63", BLUE="3B82F6", BLUE_L="EFF6FF", BLUE_B="BFDBFE",
-        GREEN="16A34A", GREEN_L="F0FDF4", GREEN_B="86EFAC",
-        RED="DC2626", RED_L="FEF2F2", RED_B="FCA5A5",
-        AMBER="D97706", AMBER_L="FFFBEB", AMBER_B="FCD34D",
-        GRAY="F8FAFC", LGRAY="F1F5F9", WHITE="FFFFFF",
-        MUTED="64748B", TEXT="0F172A";
+/* ══ UTILS ══ */
+const $=id=>document.getElementById(id);
+const fmtN=n=>Math.round(Math.abs(n)).toLocaleString();
+const fmtC=(n,always=false)=>(n<0||always?'-':'+')+' $'+fmtN(Math.abs(n));
+const isDark=()=>document.documentElement.getAttribute('data-theme')==='dark';
+const clrFor=(v,lo,hi)=>v>=hi?'var(--accent)':v>=lo?'var(--yellow)':'var(--red)';
+const lerp=(a,b,t)=>a+(b-a)*t;
+const dbc=(fn,ms=180)=>{clearTimeout(debT);debT=setTimeout(fn,ms);};
 
-  const fmt$ = "$#,##0", fmt$d = "$#,##0.00", fmtPct = "0.0%", fmtX = '0.0"x"';
-
-  // Border helpers
-  const b = (rgb="E2E8F0") => ({top:{style:"thin",color:{rgb}},bottom:{style:"thin",color:{rgb}},left:{style:"thin",color:{rgb}},right:{style:"thin",color:{rgb}}});
-  const bBot = (rgb="E2E8F0") => ({top:{style:"none"},bottom:{style:"thin",color:{rgb}},left:{style:"none"},right:{style:"none"}});
-  const bThk = (rgb="CBD5E1") => ({top:{style:"medium",color:{rgb}},bottom:{style:"medium",color:{rgb}},left:{style:"medium",color:{rgb}},right:{style:"medium",color:{rgb}}});
-
-  function C(v, opts={}) {
-    const {bold=false,italic=false,sz=10,color=TEXT,fill=null,align=null,numFmt=null,border=null} = opts;
-    const isN = typeof v === "number";
-    return {
-      v, t: isN ? "n" : "s",
-      s: {
-        font: {name:"Calibri", sz, bold, italic, color:{rgb:color}},
-        fill: fill ? {fgColor:{rgb:fill}, patternType:"solid"} : {patternType:"none"},
-        alignment: {horizontal: align||(isN?"right":"left"), vertical:"center"},
-        border: border || bBot(),
-        numFmt: numFmt || "General"
-      }
-    };
-  }
-
-  function apply(ws, data) {
-    data.forEach((row, ri) => {
-      row.forEach((c, ci) => {
-        if (!c || typeof c !== "object" || c.v === undefined) return;
-        const ref = XLSX.utils.encode_cell({r:ri, c:ci});
-        ws[ref] = {v:c.v, t:c.t, s:c.s};
-        if (c.s?.numFmt) ws[ref].z = c.s.numFmt;
-      });
-    });
-  }
-
-  // ── SHEET 1: SUMMARY ─────────────────────────────────────────
-  const S = [];
-
-  // Title row — navy bar
-  S.push([C("REAL ESTATE INVESTMENT ANALYSIS", {bold:true, sz:16, color:WHITE, fill:NAVY, align:"center", border:bThk()}),"","","",""]);
-  // Sub row — address + date in blue-light
-  S.push([C(addr, {bold:true, sz:12, color:NAVY, fill:BLUE_L, border:b(BLUE_B)}),"","",
-           C(new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}), {sz:9, italic:true, color:MUTED, fill:BLUE_L, align:"right", border:b(BLUE_B)}), ""]);
-  S.push(["","","","",""]);
-
-  // KPI section — mirrors the web app's 4 KPI cards
-  const cfOk=(s.moCF||0)>=0, cocOk=(s.coc||0)>=8, capOk=(s.capRate||0)>=6, irrOk=(s.irrVal||0)>=12;
-  const kpiDefs = [
-    ["MONTHLY CASH FLOW", s.moCF||0, fmt$d, cfOk],
-    ["CASH-ON-CASH RETURN", (s.coc||0)/100, fmtPct, cocOk],
-    ["CAP RATE", (s.capRate||0)/100, fmtPct, capOk],
-    ["5-YEAR IRR", (s.irrVal||0)/100, fmtPct, irrOk],
-  ];
-  const kpiSubs = ["after debt service","target: 8%+","target: 6%+ NJ","target: 12%+"];
-  // KPI label row
-  S.push(kpiDefs.map(([label,,, good]) =>
-    C(label, {bold:true, sz:8, color:good?GREEN:AMBER, fill:good?GREEN_L:AMBER_L, align:"center", border:b(good?GREEN_B:AMBER_B)})
-  ).concat([""]));
-  // KPI value row
-  S.push(kpiDefs.map(([,val,fmt,good]) =>
-    C(val, {bold:true, sz:24, color:good?GREEN:AMBER, fill:good?GREEN_L:AMBER_L, align:"center", numFmt:fmt, border:b(good?GREEN_B:AMBER_B)})
-  ).concat([""]));
-  // KPI sub row
-  S.push(kpiSubs.map((sub, i) => {
-    const good = kpiDefs[i][3];
-    return C(sub, {sz:8, italic:true, color:good?GREEN:AMBER, fill:good?GREEN_L:AMBER_L, align:"center", border:b(good?GREEN_B:AMBER_B)});
-  }).concat([""]));
-  // Verdict row spanning full width
-  const vText = cocOk ? "✅  STRONG DEAL" : (s.coc||0)>=3 ? "⚠️  MARGINAL DEAL" : "❌  WALK AWAY";
-  const vBg = cocOk ? GREEN_L : (s.coc||0)>=3 ? AMBER_L : RED_L;
-  const vCol = cocOk ? GREEN : (s.coc||0)>=3 ? AMBER : RED;
-  const vBdr = cocOk ? GREEN_B : (s.coc||0)>=3 ? AMBER_B : RED_B;
-  S.push([C(vText, {bold:true, sz:14, color:vCol, fill:vBg, align:"center", border:bThk(vBdr)}),"","","",""]);
-  S.push(["","","","",""]);
-
-  // ── FINANCING ─────────────────────────────────────────────────
-  S.push([C("  FINANCING & ACQUISITION", {bold:true, sz:11, color:WHITE, fill:NAVY2, align:"left", border:bThk()}),"","","",""]);
-  S.push([C("Item", {bold:true, sz:9, color:MUTED, fill:LGRAY}), C("Amount", {bold:true, sz:9, color:MUTED, fill:LGRAY, align:"right"}), "","",""]);
-  [
-    ["Purchase Price", s.price||0, fmt$, false],
-    ["Down Payment ("+((s.dpPct||0)*100).toFixed(0)+"%)", s.dp||0, fmt$, false],
-    ["Loan Amount", s.loan||0, fmt$, false],
-    ["Closing Costs + Rehab", (s.closing||0)+(s.rehab||0), fmt$, false],
-    ["TOTAL CASH REQUIRED", s.totalIn||0, fmt$, true],
-    ["Monthly Mortgage P&I", s.mtg||0, fmt$d, false],
-  ].forEach(([label, val, fmt, bold]) => {
-    const bg = bold ? BLUE_L : WHITE, tc = bold ? NAVY : TEXT, lc = bold ? NAVY : MUTED;
-    S.push([
-      C("  "+label, {bold, sz:bold?10:9, color:lc, fill:bg}),
-      C(val, {bold, sz:bold?11:10, color:tc, fill:bg, align:"right", numFmt:fmt}),
-      "","",""
-    ]);
-  });
-  S.push(["","","","",""]);
-
-  // ── INCOME & EXPENSES ─────────────────────────────────────────
-  S.push([C("  ANNUAL INCOME & EXPENSES", {bold:true, sz:11, color:WHITE, fill:NAVY2, border:bThk()}),"","","",""]);
-  S.push([
-    C("Line Item", {bold:true, sz:9, color:MUTED, fill:LGRAY}),
-    C("Annual", {bold:true, sz:9, color:MUTED, fill:LGRAY, align:"right"}),
-    C("Monthly", {bold:true, sz:9, color:MUTED, fill:LGRAY, align:"right"}),
-    "","",
-  ]);
-  [
-    ["Gross Rental Income", s.grossAnn||0, GREEN_L, GREEN, false],
-    ["Vacancy Loss ("+((s.vacPct||0)*100).toFixed(0)+"%)", -(s.vacLoss||0), RED_L, RED, false],
-    ["Effective Gross Income", s.egi||0, GRAY, MUTED, false],
-    ["Total Operating Expenses", -(s.totalExp||0), RED_L, RED, false],
-    ["Net Operating Income (NOI)", s.noi||0, BLUE_L, NAVY, true],
-    ["Annual Mortgage Payments", -(s.annMtg||0), RED_L, RED, false],
-    ["ANNUAL NET CASH FLOW", s.annCF||0, (s.annCF||0)>=0?GREEN_L:RED_L, (s.annCF||0)>=0?GREEN:RED, true],
-    ["Monthly Net Cash Flow", s.moCF||0, (s.moCF||0)>=0?GREEN_L:RED_L, (s.moCF||0)>=0?GREEN:RED, false],
-  ].forEach(([label, val, bg, col, bold]) => {
-    S.push([
-      C("  "+label, {bold, sz:bold?10:9, color:col, fill:bg}),
-      C(val, {bold, sz:bold?11:10, color:col, fill:bg, align:"right", numFmt:fmt$}),
-      C(val/12, {sz:9, color:col, fill:bg, align:"right", numFmt:fmt$d}),
-      "","",
-    ]);
-  });
-  S.push(["","","","",""]);
-
-  // ── KEY RATIOS ────────────────────────────────────────────────
-  S.push([C("  KEY INVESTMENT RATIOS", {bold:true, sz:11, color:WHITE, fill:NAVY2, border:bThk()}),"","","",""]);
-  S.push([
-    C("Metric", {bold:true, sz:9, color:MUTED, fill:LGRAY}),
-    C("Value", {bold:true, sz:9, color:MUTED, fill:LGRAY, align:"center"}),
-    C("Benchmark", {bold:true, sz:9, color:MUTED, fill:LGRAY, align:"center"}),
-    C("Status", {bold:true, sz:9, color:MUTED, fill:LGRAY, align:"center"}),
-    "",
-  ]);
-  [
-    ["Cap Rate", (s.capRate||0)/100, fmtPct, "6%+", (s.capRate||0)>=6],
-    ["Cash-on-Cash Return", (s.coc||0)/100, fmtPct, "8%+", (s.coc||0)>=8],
-    ["DSCR", s.dscr||0, fmtX, "1.25x+ (lender min)", (s.dscr||0)>=1.25],
-    ["Gross Rent Multiplier", s.grm||0, fmtX, "Under 12x", (s.grm||0)<12&&(s.grm||0)>0],
-    ["5-Year IRR", (s.irrVal||0)/100, fmtPct, "12%+", (s.irrVal||0)>=12],
-    ["Break-Even Rent", s.be||0, fmt$d, "Below market rent", true],
-  ].forEach(([label, val, fmt, bench, good]) => {
-    const bg=good?GREEN_L:RED_L, col=good?GREEN:RED, brd=good?GREEN_B:RED_B;
-    S.push([
-      C("  "+label, {sz:10, color:MUTED, fill:WHITE}),
-      C(val, {bold:true, sz:11, color:col, fill:bg, align:"center", numFmt:fmt, border:b(brd)}),
-      C(bench, {sz:9, italic:true, color:MUTED, fill:LGRAY, align:"center"}),
-      C(good?"✅  On Target":"❌  Below Target", {bold:true, sz:9, color:col, fill:bg, align:"center", border:b(brd)}),
-      "",
-    ]);
-  });
-  S.push(["","","","",""]);
-  S.push([C("For investment analysis purposes only. Verify all figures independently before making any investment decision.", {sz:8, italic:true, color:MUTED, fill:LGRAY, align:"center"}),"","","",""]);
-
-  const sumWS = XLSX.utils.aoa_to_sheet(S.map(r => r.map(c => (c&&typeof c==="object"&&c.v!==undefined)?c:"")));
-  apply(sumWS, S);
-  sumWS["!cols"] = [{wch:34},{wch:16},{wch:14},{wch:24},{wch:4}];
-  sumWS["!rows"] = [{hpt:34},{hpt:20},{hpt:6},{hpt:15},{hpt:38},{hpt:13},{hpt:20},{hpt:8}];
-  sumWS["!merges"] = [
-    {s:{r:0,c:0},e:{r:0,c:4}},
-    {s:{r:1,c:0},e:{r:1,c:2}},
-    {s:{r:7,c:0},e:{r:7,c:4}},
-    {s:{r:S.length-1,c:0},e:{r:S.length-1,c:4}},
-  ];
-  XLSX.utils.book_append_sheet(wb, sumWS, "📊 Deal Summary");
-
-  // ── PROJECTION SHEET ─────────────────────────────────────────
-  if ((s.projData||[]).length) {
-    const P = [];
-    P.push([C("5-YEAR INVESTMENT PROJECTION", {bold:true, sz:14, color:WHITE, fill:NAVY, align:"center", border:bThk()}),"","","","",""]);
-    P.push([C(addr, {sz:10, italic:true, color:MUTED, fill:BLUE_L, border:b(BLUE_B)}),"","","","",""]);
-    P.push(["","","","","",""]);
-    P.push([
-      C("Metric", {bold:true, sz:10, color:WHITE, fill:NAVY2, border:bThk()}),
-      ...s.projData.map((_,i) => C("Year "+(i+1), {bold:true, sz:10, color:WHITE, fill:NAVY2, align:"center", border:bThk()}))
-    ]);
-    [
-      ["Effective Gross Income","egi",false,false,"income"],
-      ["Operating Expenses","exp",false,true,"exp"],
-      ["Net Operating Income","noi",true,false,"noi"],
-      ["Mortgage Payments","mtg",false,true,"exp"],
-      ["Net Cash Flow","cf",true,false,"cf"],
-      ["Cumulative Cash Flow","ccf",false,false,"cf"],
-      ["Property Value","val",false,false,"val"],
-      ["Equity","eq",true,false,"eq"],
-    ].forEach(([label,key,bold,isNeg,type]) => {
-      function style(v) {
-        if(type==="cf") return v>=0?{bg:GREEN_L,col:GREEN}:{bg:RED_L,col:RED};
-        if(type==="noi") return {bg:BLUE_L,col:NAVY};
-        if(type==="eq") return {bg:BLUE_L,col:NAVY};
-        if(type==="exp") return {bg:RED_L,col:RED};
-        return {bg:WHITE,col:TEXT};
-      }
-      const row = [C("  "+label, {bold, sz:bold?10:9, color:bold?NAVY:MUTED, fill:bold?LGRAY:WHITE})];
-      (s.projData||[]).forEach(d => {
-        const v=d[key]||0, {bg,col}=style(v);
-        row.push(C(isNeg?-Math.abs(v):v, {bold, sz:bold?11:10, color:col, fill:bg, align:"right", numFmt:fmt$, border:b(bold?"CBD5E1":"E2E8F0")}));
-      });
-      P.push(row);
-    });
-    const pWS = XLSX.utils.aoa_to_sheet(P.map(r => r.map(c => (c&&typeof c==="object"&&c.v!==undefined)?c:"")));
-    apply(pWS, P);
-    pWS["!cols"] = [{wch:28},{wch:14},{wch:14},{wch:14},{wch:14},{wch:14}];
-    pWS["!merges"] = [{s:{r:0,c:0},e:{r:0,c:5}},{s:{r:1,c:0},e:{r:1,c:5}}];
-    XLSX.utils.book_append_sheet(wb, pWS, "📈 5-Year Projection");
-  }
-
-  // ── INPUTS SHEET ─────────────────────────────────────────────
-  const I = [];
-  I.push([C("DEAL INPUTS — FULL LOG", {bold:true, sz:13, color:WHITE, fill:NAVY, align:"center", border:bThk()}),"",""]);
-  I.push([C("Complete record of all figures entered for this analysis", {sz:9, italic:true, color:MUTED, fill:BLUE_L}),"",""]);
-  I.push(["","",""]);
-
-  function addSec(title){ I.push([C("  "+title, {bold:true, sz:10, color:WHITE, fill:NAVY2, border:bThk()}),"",""]); }
-  function addRow(label, val, fmt){
-    const isN = typeof val === "number" && val !== 0;
-    I.push([
-      C("  "+label, {sz:9, color:MUTED, fill:WHITE}),
-      isN ? C(val, {sz:10, color:TEXT, fill:WHITE, align:"right", numFmt:fmt||"General"})
-           : C(String(val||"—"), {sz:10, color:TEXT, fill:WHITE, align:"right"}),
-      ""
-    ]);
-  }
-  addSec("PROPERTY");
-  addRow("Address", document.getElementById("address")?.value||"—");
-  addRow("Type", document.getElementById("proptype")?.value||"—");
-  addRow("Year Built", g("yearbuilt")||"—");
-  addRow("Square Footage", g("sqft"), "#,##0");
-  I.push(["","",""]);
-  addSec("FINANCING");
-  addRow("Purchase Price", s.price||0, fmt$);
-  addRow("Down Payment %", (s.dpPct||0)*100, '0.0"%"');
-  addRow("Interest Rate %", (s.ratePct||0)*100, '0.0"%"');
-  addRow("Loan Term (years)", parseInt(document.getElementById("term")?.value)||30, "0");
-  addRow("Closing Costs", s.closing||0, fmt$);
-  addRow("Rehab / Repairs", s.rehab||0, fmt$);
-  I.push(["","",""]);
-  addSec("INCOME");
-  addRow("Unit 1 Monthly Rent", g("rent1"), fmt$);
-  addRow("Unit 2 Monthly Rent", g("rent2"), fmt$);
-  addRow("Unit 3 Monthly Rent", g("rent3"), fmt$);
-  addRow("Other Monthly Income", g("other"), fmt$);
-  addRow("Vacancy Rate %", (s.vacPct||0)*100, '0"%"');
-  I.push(["","",""]);
-  addSec("ANNUAL EXPENSES");
-  addRow("Property Taxes", g("tax"), fmt$);
-  addRow("Insurance", g("ins"), fmt$);
-  addRow("Maintenance & Repairs", g("maint"), fmt$);
-  addRow("CapEx Reserve", g("capex"), fmt$);
-  addRow("Property Management", g("mgmt"), fmt$);
-  addRow("Utilities", g("util"), fmt$);
-  addRow("Landscaping / Snow", g("landscape"), fmt$);
-  addRow("Accounting / LLC Fees", g("legal"), fmt$);
-
-  const iWS = XLSX.utils.aoa_to_sheet(I.map(r => r.map(c => (c&&typeof c==="object"&&c.v!==undefined)?c:"")));
-  apply(iWS, I);
-  iWS["!cols"] = [{wch:30},{wch:22},{wch:4}];
-  iWS["!merges"] = [{s:{r:0,c:0},e:{r:0,c:2}},{s:{r:1,c:0},e:{r:1,c:2}}];
-  XLSX.utils.book_append_sheet(wb, iWS, "📋 Inputs");
-
-  XLSX.writeFile(wb, (addr.replace(/[^a-z0-9]/gi,"_")||"deal")+"_analysis.xlsx");
+/* ══ THEME ══ */
+function toggleTheme(){
+  const d=isDark();document.documentElement.setAttribute('data-theme',d?'light':'dark');
+  $('togL').classList.toggle('on',!d);$('togD').classList.toggle('on',d);redrawCharts();
 }
 
-
-document.querySelectorAll("input[type=range]").forEach(updateSlider);calc();
-
-// Wire all buttons via addEventListener
-
-// Dark mode toggle functionality
-function toggleTheme() {
-  const html = document.documentElement;
-  const current = html.getAttribute('data-theme');
-  const knob = document.querySelector('.theme-toggle-knob');
-  if (current === 'dark') {
-    html.removeAttribute('data-theme');
-    knob.textContent = '☀️';
-    localStorage.setItem('theme', 'light');
-  } else {
-    html.setAttribute('data-theme', 'dark');
-    knob.textContent = '🌙';
-    localStorage.setItem('theme', 'dark');
-  }
-}
-
-// Load saved theme on page load
-(function() {
-  const saved = localStorage.getItem('theme');
-  if (saved === 'dark') {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    setTimeout(() => {
-      const knob = document.querySelector('.theme-toggle-knob');
-      if (knob) knob.textContent = '🌙';
-    }, 0);
-  }
-})();
-
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('input[type=range]').forEach(updateSlider);
-  calc();
-  var m = {
-    'btn-start': function(){ startWizard(); },
-    'nav-home': function(){ location.reload(); },
-    'theme-toggle': function(){ toggleTheme(); },
-    'btn-skip1': function(){ goStep(2); },
-    'btn-back0': function(){ goIntro(); },
-    'btn-back1': function(){ goStep(1); },
-    'btn-back2': function(){ goStep(2); },
-    'btn-back3': function(){ goStep(3); },
-    'btn-back-s3': function(){ goStep(2); },
-    'btn-back-s4': function(){ goStep(3); },
-    'btn-s2': function(){ goStep(2); },
-    'btn-s3': function(){ goStep(3); },
-    'btn-s4': function(){ goStep(4); },
-    'btn-results': function(){ showResults(); },
-    'deep-btn': function(){ openDeepDive(); },
-    'btn-pdf': function(){ exportPDF(); },
-    'btn-xlsx': function(){ exportXLSX(); },
-    'btn-ai': function(){ openAI(); },
-    'btn-restart': function(){ goIntro(); },
-    'dsh6': function(){ toggleDS('ds6'); },
-    'dsh7': function(){ toggleDS('ds7'); },
-    'dsh8': function(){ toggleDS('ds8'); },
-  };
-  Object.keys(m).forEach(function(id) {
-    var el = document.getElementById(id);
-    if(el) el.addEventListener('click', m[id]);
-  });
+/* ══ OPENING ══ */
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>$('ohero').classList.add('in'),60);
+  setTimeout(()=>$('octa').classList.add('in'),110);
 });
-</script>
 
+/* ══ HOME / RESET ══ */
+function goHome(){
+  S=JSON.parse(JSON.stringify(DEF));tf1=10;tf2=10;advOpen=false;dashR=null;
+  showScreen('opening');
+  const b=$('ohero');const c=$('octa');
+  if(b){b.style.animation='none';b.style.opacity='1';b.style.transform='none';}
+  if(c){c.style.animation='none';c.style.opacity='1';c.style.transform='none';}
+}
 
+function showScreen(id){
+  ['opening','wizard'].forEach(s=>{const el=$(s);if(el){el.classList.remove('active');el.style.display='none';}});
+  const res=$('results');if(res){res.classList.remove('active');res.style.display='none';}
+  if(id==='results'){res.style.display='block';requestAnimationFrame(()=>requestAnimationFrame(()=>res.classList.add('active')));}
+  else{const el=$(id);if(el){el.style.display='flex';requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('active')));}}
+  if(id==='results')window.scrollTo({top:0,behavior:'instant'});
+}
+
+function startWizard(){S.step=0;stepDir=1;showScreen('wizard');renderStep(false);}
+
+/* ══ PROGRESS ══ */
+function renderProg(){
+  const n=4;let h='';
+  for(let i=0;i<n;i++){
+    if(i>0)h+=`<div class="pl${i<=S.step?' done':''}"></div>`;
+    h+=`<div class="pd${i===S.step?' active':i<S.step?' done':''}"></div>`;
+  }
+  $('prog').innerHTML=h;
+}
+
+/* ══ TOOLTIP ══ */
+function tip(id,text){return`<span class="qw"><button class="qb" onclick="showTip(event,'${id}')">?</button><div class="ttip" id="tip_${id}">${text}</div></span>`;}
+function showTip(e,id){
+  e.stopPropagation();const el=$(`tip_${id}`);const was=el.classList.contains('show');
+  document.querySelectorAll('.ttip').forEach(t=>t.classList.remove('show'));if(was)return;
+  const br=e.currentTarget.getBoundingClientRect();const W=window.innerWidth;const H=window.innerHeight;const tw=240;
+  let top=br.bottom+8;let left=br.left-tw/2+7;
+  if(top+120>H-10)top=br.top-128;if(left<8)left=8;if(left+tw>W-8)left=W-tw-8;
+  el.style.top=top+'px';el.style.left=left+'px';el.classList.add('show');
+  setTimeout(()=>document.addEventListener('click',function h(){el.classList.remove('show');document.removeEventListener('click',h);}),40);
+}
+
+/* ══ STEP TRANSITIONS ══ */
+function renderStep(animate=true){
+  renderProg();
+  const wb=$('wb');
+  if(animate&&wb.children.length){
+    const oc=stepDir>0?'sol':'sor';
+    wb.classList.add(oc);
+    setTimeout(()=>{
+      wb.classList.remove(oc);wb.innerHTML=buildStep();bindStep();
+      wb.style.opacity='0';wb.style.transform=stepDir>0?'translateX(26px)':'translateX(-26px)';
+      requestAnimationFrame(()=>{wb.style.transition='opacity .27s ease,transform .27s ease';wb.style.opacity='1';wb.style.transform='none';setTimeout(()=>wb.style.transition='',300);});
+    },200);
+  } else {wb.innerHTML=buildStep();bindStep();}
+}
+function buildStep(){if(S.step===0)return step0();if(S.step===1)return step1();if(S.step===2)return step2();return step3();}
+function nextStep(){stepDir=1;S.step++;renderStep();}
+function prevStep(){stepDir=-1;S.step--;renderStep();}
+
+/* ══ STEP 0 — ADDRESS ══ */
+function step0(){
+  const stateOpts=STATES.map(s=>`<option value="${s}"${S.addr.state===s?' selected':''}>${s}</option>`).join('');
+  const countryOpts=COUNTRIES.map(c=>`<option value="${c}"${S.addr.country===c?' selected':''}>${c}</option>`).join('');
+  return`
+  <div class="shint">Step 1 of 4</div>
+  <div style="text-align:center;margin-bottom:4px">
+    <div style="font-size:1.75rem;font-weight:800;letter-spacing:-.6px">Where is this property?</div>
+    <div style="font-size:.85rem;color:var(--muted);margin-top:5px">Used for your PDF report — skip if you want to jump straight in.</div>
+  </div>
+  <div class="addr-card">
+    <div class="addr-label">Property address</div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <input class="ainp" id="aStreet" placeholder="Street address" value="${S.addr.street}" autocomplete="street-address" oninput="S.addr.street=this.value">
+      <div class="ag2">
+        <input class="ainp" id="aCity" placeholder="City" value="${S.addr.city}" autocomplete="address-level2" oninput="S.addr.city=this.value">
+        <select class="ainp" id="aState" oninput="S.addr.state=this.value">
+          <option value="" disabled${!S.addr.state?' selected':''}>State</option>
+          ${stateOpts}
+        </select>
+      </div>
+      <div class="ag2">
+        <input class="ainp" id="aZip" placeholder="ZIP code" value="${S.addr.zip}" autocomplete="postal-code" inputmode="numeric" oninput="S.addr.zip=this.value">
+        <select class="ainp" id="aCountry" oninput="S.addr.country=this.value">
+          ${countryOpts}
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="navbtns">
+    <button class="btn-skip btn-g btn" onclick="nextStep()" style="flex:0 0 auto;padding:13px 24px;background:transparent;border:1.5px solid var(--border);color:var(--muted)">Skip →</button>
+    <button class="btn btn-p" onclick="nextStep()">Continue →</button>
+  </div>`;
+}
+
+/* ══ STEP 1 — PROPERTY ══ */
+function dpColor(v){return v>=20?'var(--accent)':v>=10?'var(--yellow)':v>=5?'var(--orange)':'var(--red)';}
+function rateColor(v){return v<=6?'var(--accent)':v<=8?'var(--yellow)':'var(--red)';}
+
+function step1(){
+  const ps=S.price>10000;
+  return`
+  <div class="shint">Step 2 of 4</div>
+  <div class="stitle">Property details</div>
+  <div class="rf s" id="rf0">
+    <div class="price-hero${ps?' sm':''}" id="ph">
+      <div class="prow"><span class="psym">$</span><input type="text" id="pp" class="${ps?'sm':''}" placeholder="000,000" value="${S.price?fmtN(S.price):''}"></div>
+      <div class="plabel">Purchase price</div>
+    </div>
+  </div>
+  <div class="rf${ps?' s':''}" id="rf1">
+    <div class="fl" style="margin-bottom:8px">Property type ${tip('ut','How many rentable units this property has.')}</div>
+    <div class="ugrid" id="ugrid">${unitCards()}</div>
+  </div>
+  <div class="rf${ps?' s':''}" id="rf2">
+    <div class="cardg">
+      <div class="fl" style="margin-bottom:11px">Down payment ${tip('dp','20%+ is considered strong and avoids PMI. Below 10% is high-leverage territory.')}</div>
+      <div class="sv"><div class="v" id="dpV">${S.downPct}%</div><div class="vs" id="dpD">$${fmtN(S.price*S.downPct/100)}</div></div>
+      <div class="strk"><div class="strk-bg"></div><div class="strk-fill" id="dpFill"></div><input type="range" id="dpS" min="3" max="50" value="${S.downPct}" oninput="S.downPct=+this.value;syncDP()"></div>
+    </div>
+  </div>
+  <div class="rf${ps?' s':''}" id="rf3">
+    <div class="cardg">
+      <div class="fl" style="margin-bottom:11px">Interest rate ${tip('rt','Each 0.5% point meaningfully impacts monthly cashflow and long-term returns.')}</div>
+      <div class="sv"><div class="v" id="rtV">${S.rate.toFixed(2)}%</div><div class="vs">30-yr fixed</div></div>
+      <div class="strk"><div class="strk-bg"></div><div class="strk-fill" id="rtFill"></div><input type="range" id="rtS" min="4" max="12" step="0.25" value="${S.rate}" oninput="S.rate=+this.value;syncRT()"></div>
+    </div>
+  </div>
+  <div class="rf${ps?' s':''}" id="rf4">
+    <div class="navbtns">
+      <button class="btn btn-g" onclick="prevStep()">← Back</button>
+      <button class="btn btn-p" onclick="nextStep()">Continue →</button>
+    </div>
+  </div>`;
+}
+
+function unitCards(){return[1,2,3,4].map(u=>`<div class="uc${S.units===u?' sel':''}" onclick="selUnit(${u})"><div class="ui">${['🏠','🏘','🏢','🏬'][u-1]}</div><span>${['Single','Duplex','Triplex','Quad'][u-1]}</span></div>`).join('');}
+function selUnit(u){S.units=u;S.rents=[];const g=$('ugrid');if(g)g.innerHTML=unitCards();}
+
+function setFill(id,pct,color){
+  const el=$(id);if(!el)return;
+  el.style.cssText=`width:${Math.max(0,Math.min(100,pct))}%;background:${color};position:absolute;left:0;height:5px;top:50%;transform:translateY(-50%);border-radius:5px;pointer-events:none;transition:none`;
+}
+function setThumb(id,color){
+  let st=document.getElementById('_ts_'+id);
+  if(!st){st=document.createElement('style');st.id='_ts_'+id;document.head.appendChild(st);}
+  st.textContent=`#${id}::-webkit-slider-thumb{border-color:${color}!important}#${id}::-moz-range-thumb{border-color:${color}!important}`;
+}
+function syncDP(){
+  const v=S.downPct;const c=dpColor(v);
+  setFill('dpFill',(v-3)/47*100,c);setThumb('dpS',c);
+  const p=$('dpV');if(p)p.textContent=v+'%';
+  const d=$('dpD');if(d)d.textContent=S.price?'$'+fmtN(S.price*v/100):'-';
+}
+function syncRT(){
+  const v=S.rate;const c=rateColor(v);
+  setFill('rtFill',(v-4)/8*100,c);setThumb('rtS',c);
+  const rv=$('rtV');if(rv)rv.textContent=v.toFixed(2)+'%';
+}
+function revealSeq(ids,gap){ids.forEach((id,i)=>setTimeout(()=>{const el=$(id);if(el&&!el.classList.contains('s'))el.classList.add('s');},i*gap));}
+
+/* ══ STEP 2 — INCOME ══ */
+const estRent=i=>Math.max(600,Math.round(S.price?S.price*0.005/100*100:900)-i*50);
+function grossColor(gmo){const r=S.price?(gmo*12/S.price*100):0;return r>=6?'var(--accent)':r>=4?'var(--yellow)':'var(--red)';}
+function grossLabel(gmo){const r=S.price?(gmo*12/S.price*100):0;return r>=6?'Solid yield for this price':r>=4.5?'Reasonable — verify local rents':r>=3?'Thin — confirm market rents':'Low relative to price';}
+
+function step2(){
+  if(!S.rents.length||S.rents.length!==S.units){S.rents=[];for(let i=0;i<S.units;i++)S.rents.push(estRent(i));}
+  const gross=S.rents.reduce((a,b)=>a+b,0);const gc=grossColor(gross);const isMo=S.period==='mo';
+  let fields='';
+  for(let i=0;i<S.units;i++){
+    const disp=isMo?S.rents[i]:Math.round(S.rents[i]*12);
+    fields+=`<div class="rent-row"><label>Unit ${i+1}</label><div class="irow"><span class="isym">$</span><input type="number" id="r_${i}" value="${disp}" step="${isMo?50:600}" min="0" oninput="updateRent(${i},this.value)"></div></div>`;
+  }
+  return`
+  <div class="shint">Step 3 of 4</div>
+  <div class="stitle">Rental income</div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px">
+      <div style="display:flex;align-items:center;gap:8px"><div class="fl">Rent per unit ${tip('ri','Monthly rent. Pre-filled at 0.5% of purchase price — adjust to your local market.')}</div><span class="est-badge">Estimate</span></div>
+      <div class="ppill"><div class="ppo${S.period==='mo'?' on':''}" onclick="setPeriod('mo')">Monthly</div><div class="ppo${S.period==='yr'?' on':''}" onclick="setPeriod('yr')">Annual</div></div>
+    </div>
+    ${fields}
+    <div class="gmeter">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div class="gnum" id="gNum" style="color:${gc}">$${fmtN(gross*12)}<span style="font-size:.68rem;font-weight:600;margin-left:3px;color:var(--muted)">/yr</span></div>
+        <div class="gsub" id="gSub" style="color:${gc}">${grossLabel(gross)}</div>
+      </div>
+      <div class="mtrk"><div class="mfill" id="mFill" style="width:${Math.min(100,gross/(2500*S.units)*100)}%;background:${gc}"></div></div>
+    </div>
+  </div>
+  <div class="navbtns">
+    <button class="btn btn-g" onclick="prevStep()">← Back</button>
+    <button class="btn btn-p" onclick="nextStep()">Continue →</button>
+  </div>`;
+}
+function setPeriod(p){
+  const isMo=S.period==='mo';const isNewMo=p==='mo';if(isMo===isNewMo)return;
+  S.period=p;
+  for(let i=0;i<S.units;i++){const el=$(`r_${i}`);if(!el)continue;const cur=+el.value||0;el.value=isNewMo?Math.round(cur/12):Math.round(cur*12);}
+  renderStep(false);
+}
+function updateRent(i,val){
+  S.rents[i]=S.period==='mo'?(+val||0):Math.round((+val||0)/12);
+  const gross=S.rents.reduce((a,b)=>a+b,0);const gc=grossColor(gross);
+  const gn=$('gNum');if(gn){gn.style.color=gc;gn.innerHTML=`$${fmtN(gross*12)}<span style="font-size:.68rem;font-weight:600;margin-left:3px;color:var(--muted)">/yr</span>`;}
+  const gs=$('gSub');if(gs){gs.style.color=gc;gs.textContent=grossLabel(gross);}
+  const mf=$('mFill');if(mf){mf.style.width=Math.min(100,gross/(2500*S.units)*100)+'%';mf.style.background=gc;}
+}
+
+/* ══ STEP 3 — EXPENSES ══ */
+function autoFill(){
+  if(!S.price)return;
+  if(!S.taxes)S.taxes=Math.round(S.price*0.012/12);
+  if(!S.insurance)S.insurance=Math.round(S.price*0.005/12);
+  if(!S.maintenance)S.maintenance=Math.round(S.price*0.01/12);
+  const g=S.rents.reduce((a,b)=>a+b,0)||estRent(0)*S.units;
+  if(!S.vacancy)S.vacancy=Math.round(g*0.08);
+  if(!S.management)S.management=Math.round(g*0.08);
+}
+function calcM(p,d,r){
+  const pr=p??S.price;const dn=d??S.downPct;const rt=r??S.rate;
+  const loan=pr*(1-dn/100);const mr=rt/100/12;const n=360;
+  if(mr===0)return loan/n;return loan*(mr*Math.pow(1+mr,n))/(Math.pow(1+mr,n)-1);
+}
+
+function step3(){
+  autoFill();const mort=calcM();const isMo=S.period==='mo';
+  const f=v=>isMo?Math.round(v):Math.round(v*12);
+  const tot=mort+S.taxes+S.insurance+S.maintenance+S.vacancy+S.management+S.otherExp;
+  function mkLine(key,label,tipTxt,def){
+    const v=S[key]||0;const disp=f(v);
+    return`<div class="rline">
+      <div class="rline-name">${label} ${tip('ex_'+key,tipTxt)}<span class="est-badge">Est.</span></div>
+      <div class="rline-input"><input class="est-inp" type="number" id="ei_${key}" value="${disp}" min="0" step="${isMo?10:120}" oninput="updExpInp('${key}',this.value,${isMo})"></div>
+      <div class="rline-amt" id="ev_${key}" style="color:var(--muted)"></div>
+    </div>`;
+  }
+  return`
+  <div class="shint">Step 4 of 4</div>
+  <div class="stitle">Monthly expenses</div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+    <div class="ppill"><div class="ppo${S.period==='mo'?' on':''}" onclick="setPeriodExp('mo')">Monthly</div><div class="ppo${S.period==='yr'?' on':''}" onclick="setPeriodExp('yr')">Annual</div></div>
+  </div>
+  <div class="receipt">
+    <div class="rcp-head">
+      <div class="rcp-head-l">All monthly costs — mortgage + operating expenses</div>
+    </div>
+    <div class="rcp-body">
+      <div class="rline mort-line">
+        <div class="rline-name" style="color:var(--accent)">🏦 Mortgage P&I ${tip('ex_mort','Principal + interest, fixed 30yr. Calculated from your price, down payment, and rate.')}</div>
+        <div class="rline-amt mort-amt">$${fmtN(f(mort))}</div>
+      </div>
+      ${mkLine('taxes','Property tax','Annual property tax ÷ 12. Check your county assessor for exact rate.',S.taxes)}
+      ${mkLine('insurance','Insurance','Landlord property insurance. Usually $100–250/mo depending on property size.',S.insurance)}
+      ${mkLine('maintenance','Maintenance','Repairs & upkeep budget. Standard: 1% of property value per year.',S.maintenance)}
+      ${mkLine('vacancy','Vacancy cost','Lost rent between tenants. 8% ≈ about 1 month vacant per year.',S.vacancy)}
+      ${mkLine('management','Prop. management','Property manager fee. 8–12% of gross rent. Set 0 if self-managing.',S.management)}
+      ${mkLine('otherExp','Other costs','HOA, landscaping, utilities, anything not covered above.',0)}
+    </div>
+    <div class="rcp-dash"></div>
+    <div class="rcp-total">
+      <div>
+        <div class="rcp-total-label">Total ${isMo?'monthly':'annual'} cost</div>
+        <div class="rcp-total-sub">Mortgage + all operating expenses</div>
+      </div>
+      <div style="text-align:right">
+        <div class="rcp-total-v" id="expTot">$${fmtN(f(tot))}</div>
+        <div class="rcp-total-yr" id="expTotAlt">${isMo?'$'+fmtN(Math.round(tot*12))+' /yr':'$'+fmtN(Math.round(tot))+' /mo'}</div>
+      </div>
+    </div>
+  </div>
+  <div class="navbtns" style="margin-top:8px">
+    <button class="btn btn-g" onclick="prevStep()">← Back</button>
+    <button class="btn btn-p" onclick="showResults()">See analysis →</button>
+  </div>`;
+}
+function setPeriodExp(p){S.period=p;renderStep(false);}
+function updExpInp(key,val,isMo){
+  S[key]=isMo?(+val||0):Math.round((+val||0)/12);
+  const ev=$(`ev_${key}`);if(ev)ev.textContent='';
+  // Mark as no longer an estimate once edited
+  const inp=$(`ei_${key}`);if(inp)inp.classList.remove('est-inp');
+  syncExpTotal();
+}
+function syncExpTotal(){
+  const mort=calcM();const isMo=S.period==='mo';
+  const f=v=>isMo?Math.round(v):Math.round(v*12);
+  const tot=mort+S.taxes+S.insurance+S.maintenance+S.vacancy+S.management+S.otherExp;
+  const et=$('expTot');if(et)et.textContent='$'+fmtN(f(tot));
+  const ea=$('expTotAlt');if(ea)ea.textContent=isMo?'$'+fmtN(Math.round(tot*12))+' /yr':'$'+fmtN(Math.round(tot))+' /mo';
+}
+
+/* ══ BIND ══ */
+function bindStep(){
+  if(S.step===1){
+    const ppEl=$('pp');
+    if(ppEl){
+      ppEl.addEventListener('input',()=>{
+        let v=ppEl.value.replace(/[^0-9]/g,'');S.price=+v;ppEl.value=v?fmtN(+v):'';
+        if(S.price>50000){const ph=$('ph');if(ph&&!ph.classList.contains('sm')){ph.classList.add('sm');ppEl.classList.add('sm');}revealSeq(['rf1','rf2','rf3','rf4'],120);}
+        syncDP();syncRT();
+      });
+    }
+    syncDP();syncRT();
+    const dp=$('dpS');if(dp)dp.addEventListener('input',()=>{S.downPct=+dp.value;syncDP();});
+    const rs=$('rtS');if(rs)rs.addEventListener('input',()=>{S.rate=+rs.value;syncRT();});
+  } else if(S.step===2){
+    for(let i=0;i<S.units;i++){
+      const el=$(`r_${i}`);if(!el)continue;
+      el.addEventListener('keydown',e=>{
+        const step=S.period==='mo'?50:600;
+        if(e.key==='ArrowUp'){e.preventDefault();el.value=+el.value+step;updateRent(i,el.value);}
+        if(e.key==='ArrowDown'){e.preventDefault();el.value=Math.max(0,+el.value-step);updateRent(i,el.value);}
+      });
+    }
+  }
+}
+
+/* ══ MATH ══ */
+function calcCore(ov={}){
+  const price=ov.price??S.price;const dp=ov.dp??S.downPct;const rate=ov.rate??S.rate;
+  const mort=calcM(price,dp,rate);
+  const rents=ov.rents??S.rents;
+  const gross=rents.reduce((a,b)=>a+b,0)||(estRent(0)*S.units);
+  const tx=S.taxes||Math.round(price*0.012/12);
+  const ins=S.insurance||Math.round(price*0.005/12);
+  const mnt=S.maintenance||Math.round(price*0.01/12);
+  const vac=S.vacancy||Math.round(gross*0.08);
+  const mgmt=S.management||Math.round(gross*0.08);
+  const oth=S.otherExp||0;
+  const opExp=tx+ins+mnt+vac+mgmt+oth;
+  const totalExp=mort+opExp;
+  const noi=(gross-vac-mgmt-mnt-tx-ins-oth)*12;
+  const capRate=price?noi/price*100:0;
+  const down=price*dp/100;
+  const annualCF=(gross-totalExp)*12;
+  const coc=down?annualCF/down*100:0;
+  const loan=price*(1-dp/100);
+  const ltv=price?loan/price*100:0;
+  const grm=gross*12>0?price/(gross*12):0;
+  const dscr=mort*12>0?(gross-vac-mgmt)*12/(mort*12):0;
+  const ber=gross>0?totalExp/gross*100:100;
+  const oer=gross>0?opExp/gross*100:0;
+  const fv10=price*Math.pow(1.03,10)-(loan*0.82);
+  const irr10=down?(Math.pow(Math.max(.005,(annualCF*10+(fv10-down)+down))/down,1/10)-1)*100:0;
+  const fv30=price*Math.pow(1.03,30)-(loan*0.28);
+  const irr30=down?(Math.pow(Math.max(.005,(annualCF*30+(fv30-down)+down))/down,1/30)-1)*100:0;
+  const eqMult=down>0?(annualCF*10+fv10)/down:0;
+  return{mort,gross,totalExp,opExp,noi,capRate,coc,annualCF,cf:gross-totalExp,down,price,dp,rate,ltv,grm,dscr,ber,oer,irr10,irr30,eqMult,tx,ins,mnt,vac,mgmt,oth,loan};
+}
+
+function verdictAndAdvice(R){
+  const{coc,capRate,cf,irr10,dscr,grm,ber,price,gross,totalExp}=R;
+  let verdict,color,advice;
+  if(coc>=12&&capRate>=8&&dscr>=1.25){
+    verdict='Strong Buy';color='var(--accent)';
+    advice=`The fundamentals here are genuinely solid. You're cashflow positive at $${fmtN(cf)}/mo, the cap rate sits at ${capRate.toFixed(1)}% — well above the 8% threshold — and debt coverage at ${dscr.toFixed(2)}x gives you a real buffer. A 10-year IRR of ${irr10.toFixed(1)}% is competitive against the public markets. Run your physical inspection, lock in financing, and negotiate from a position of confidence.`;
+  } else if(coc>=8&&capRate>=6){
+    verdict='Good Deal';color='var(--accent)';
+    advice=`This one works. ${cf>0?`You're cashflow positive at $${fmtN(cf)}/mo`:'You\'re near breakeven on monthly cashflow'}, the ${capRate.toFixed(1)}% cap rate clears the 6% floor, and the debt coverage is ${dscr>=1.1?'healthy':'passable'}. The long-term play is strong — equity paydown and appreciation will compound over time. Just don't count on monthly income as your primary return driver.`;
+  } else if(coc>=4&&capRate>=5){
+    verdict='Borderline';color='var(--yellow)';
+    advice=`This deal is sitting right on the fence. ${cf>=0?`Cashflow is thin at $${fmtN(cf)}/mo`:`You'd be out $${fmtN(Math.abs(cf))}/mo from day one`}, and at a ${capRate.toFixed(1)}% cap rate, you're not getting compensated well for the risk. ${grm>15?`A GRM of ${grm.toFixed(1)}x signals you're paying a premium for this income.`:''} Push for a price reduction of $${fmtN(Math.round(price*.05))} or verify whether rents have room to grow before committing.`;
+  } else if(coc>=0){
+    verdict='Weak Deal';color='var(--yellow)';
+    advice=`The numbers aren't working at this price. ${cf<0?`You're covering $${fmtN(Math.abs(cf))}/mo out of your own pocket`:'You\'re barely breaking even'}, and the ${capRate.toFixed(1)}% cap rate falls meaningfully short of the 6% floor. ${dscr<1.1?`Debt coverage at ${dscr.toFixed(2)}x is uncomfortably low.`:''} Unless there's a strong value-add angle — renovation, rent upside, rezoning — this needs a significant price cut to make sense.`;
+  } else {
+    verdict='Walk Away';color='var(--red)';
+    advice=`Don't buy this property at this price. You'd be losing $${fmtN(Math.abs(cf))}/mo — $${fmtN(Math.abs(cf)*12)} a year — with a ${capRate.toFixed(1)}% cap rate${capRate<3?' that barely beats a savings account':' well below any reasonable threshold'}. ${ber>100?'Break-even occupancy exceeds 100%, meaning this deal loses money even when fully occupied. ':''} Keep looking — there are better uses for your capital.`;
+  }
+  return{verdict,color,advice};
+}
+
+function stressCF(type,val,R){
+  const r=R||dashR||calcCore();
+  if(type==='rate'){const nm=calcM(S.price,S.downPct,S.rate+val);return r.gross-(r.totalExp-r.mort+nm);}
+  if(type==='vac')return r.gross-r.totalExp-(r.gross*val/100-(S.vacancy||0));
+  if(type==='rent')return r.gross*(1-val)-r.totalExp;
+  return 0;
+}
+
+function equitySched(yrs,ov={}){
+  const price=ov.price??S.price;const dp=ov.dp??S.downPct;const rate=ov.rate??S.rate;
+  const loan=price*(1-dp/100);const mr=rate/100/12;const M=calcM(price,dp,rate);
+  const g=(ov.rents??S.rents).reduce((a,b)=>a+b,0)||estRent(0)*S.units;
+  const mo=(S.taxes||0)+(S.insurance||0)+(S.maintenance||0)+(S.vacancy||0)+(S.management||0)+(S.otherExp||0);
+  let bal=loan;const pts=[];
+  for(let yr=0;yr<=yrs;yr++){
+    const appVal=price*Math.pow(1.03,yr);const equity=appVal-bal;const cumCF=(g-(mo+M))*12*yr;
+    const spxG=(price*dp/100)*Math.pow(1.103,yr)-(price*dp/100);
+    pts.push({yr,equity:Math.round(equity),profit:Math.round(equity-price*dp/100+cumCF),spxGain:Math.round(spxG),propValue:Math.round(appVal)});
+    for(let m=0;m<12;m++){const int=bal*mr;bal=Math.max(0,bal-(M-int));}
+  }
+  return pts;
+}
+
+function countUp(el,target,dur,pre='',suf=''){
+  if(!el)return;const s0=performance.now();
+  (function fr(now){const p=Math.min(1,(now-s0)/dur);const val=Math.round(lerp(0,Math.abs(target),p));
+    el.textContent=(target<0?'-':'')+pre+fmtN(val)+suf;if(p<1)requestAnimationFrame(fr);})(performance.now());
+}
+
+/* ══ GAUGE ══ */
+function mkGaugeCard(id,title,label,valId,tipTxt,shortDesc,desc,ranges){
+  const rangeSegs=ranges.map(r=>`<div class="gcard-range-seg" style="background:${r.c};flex:${r.w}"></div>`).join('');
+  const markers=ranges.map(r=>`<span>${r.label}</span>`).join('');
+  return`<div class="gcard" id="gcard_${id}" onclick="toggleGcard('${id}')">
+    <div class="gcard-inner">
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" width="80" height="48" viewBox="0 0 80 48">
+          <path d="M8 44 A 32 32 0 0 1 72 44" fill="none" stroke="var(--card3)" stroke-width="6" stroke-linecap="round"/>
+          <path id="arc_${id}" d="M8 44 A 32 32 0 0 1 72 44" fill="none" stroke="var(--muted)" stroke-width="6" stroke-linecap="round" stroke-dasharray="100" stroke-dashoffset="100"/>
+        </svg>
+        <div class="glabel">${label}</div>
+      </div>
+      <div class="gcard-right">
+        <div class="gcard-title">${title} ${tip('g_'+id,tipTxt)}</div>
+        <div class="gcard-mainval" id="${valId}">—</div>
+        <div class="gcard-sub">${shortDesc}</div>
+      </div>
+    </div>
+    <div class="gcard-detail">
+      <div class="gcard-detail-inner">
+        <div class="gcard-desc">${desc}</div>
+        <div class="gcard-range">${rangeSegs}</div>
+        <div class="gcard-markers">${markers}</div>
+        <div class="gcard-where" id="gmark_${id}"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleGcard(id){
+  const c=$(`gcard_${id}`);if(!c)return;
+  const wasOpen=c.classList.contains('open');
+  document.querySelectorAll('.gcard').forEach(g=>g.classList.remove('open'));
+  if(!wasOpen){
+    c.classList.add('open');
+    const arc=$(`arc_${id}`);if(arc){const cur=arc.style.strokeDashoffset;arc.style.transition='none';arc.style.strokeDashoffset='100';requestAnimationFrame(()=>{arc.style.transition='stroke-dashoffset .85s cubic-bezier(.4,0,.2,1)';arc.style.strokeDashoffset=cur;});}
+  }
+}
+
+function animGauge(id,valId,raw,color,pct,isUp,dur){
+  const arc=$(`arc_${id}`);if(arc){arc.style.stroke=color;const offset=100-Math.min(100,Math.max(0,pct))/100*100;
+    if(!isUp){arc.style.transition='none';arc.style.strokeDashoffset='100';requestAnimationFrame(()=>{arc.style.transition='stroke-dashoffset .85s cubic-bezier(.4,0,.2,1)';arc.style.strokeDashoffset=offset;});}
+    else arc.style.strokeDashoffset=offset;}
+  const ve=$(valId);if(ve){ve.style.color=color;if(isUp)ve.textContent=raw.toFixed(1)+'%';else countUp(ve,raw,dur,'','%');}
+}
+
+/* ══ DONUT ══ */
+function drawDonut(canvasId,items){
+  const c=$(canvasId);if(!c)return;
+  const dpr=window.devicePixelRatio||1;const sz=c.offsetWidth||120;
+  c.width=sz*dpr;c.height=sz*dpr;c.style.width=sz+'px';c.style.height=sz+'px';
+  const ctx=c.getContext('2d');ctx.scale(dpr,dpr);
+  const cx=sz/2;const cy=sz/2;const r=sz*0.38;const inner=sz*0.22;
+  ctx.clearRect(0,0,sz,sz);
+  const total=items.reduce((a,x)=>a+x.v,0)||1;let ang=-Math.PI/2;
+  items.forEach(it=>{const sweep=(it.v/total)*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,ang,ang+sweep);ctx.closePath();ctx.fillStyle=it.c;ctx.fill();ang+=sweep;});
+  ctx.beginPath();ctx.arc(cx,cy,inner,0,Math.PI*2);const bg=getComputedStyle(document.documentElement).getPropertyValue('--card').trim()||'#fff';ctx.fillStyle=bg;ctx.fill();
+}
+
+/* ══ DASHBOARD ══ */
+function showResults(){
+  showScreen('results');autoFill();dashR=calcCore();renderDash(dashR,false);
+}
+
+function addrStr(){
+  const a=S.addr;const parts=[a.street,[a.city,a.state].filter(Boolean).join(', '),a.zip,a.country&&a.country!=='United States'?a.country:''].filter(Boolean);
+  return parts.join(' · ')||null;
+}
+
+function renderDash(R,isUpdate){
+  const{verdict,color,advice}=verdictAndAdvice(R);
+  const cfC=R.cf>=0?'var(--accent)':'var(--red)';
+  const eq1=equitySched(tf1);const eq2=equitySched(tf2);
+  const last2=eq2[eq2.length-1];
+  const stress=[{t:'Rates +2%',cf:stressCF('rate',2,R)},{t:'Vacancy 20%',cf:stressCF('vac',20,R)},{t:'Rents −10%',cf:stressCF('rent',.1,R)}];
+  const avgRent=S.rents.length?Math.round(S.rents.reduce((a,b)=>a+b,0)/S.rents.length):estRent(0);
+  const addr=addrStr();
+
+  if(!isUpdate){
+    $('results').innerHTML=`
+    <!-- PDF DOC — only visible in print -->
+    <div class="pdf-doc" id="pdfDoc"></div>
+
+    <div class="dash">
+      ${addr?`<div style="font-size:.72rem;color:var(--muted);margin-bottom:4px">📍 ${addr}</div>`:''}
+      <div style="font-size:1.5rem;font-weight:800;letter-spacing:-.5px;margin-bottom:16px">$${fmtN(R.price)} · ${S.units===1?'Single family':S.units+'-unit'} rental</div>
+
+      <div class="dash-actions">
+        <button class="act-btn" onclick="goBack()">← Edit inputs</button>
+        <button class="act-btn pr" onclick="openPdf()">↓ Export PDF</button>
+      </div>
+
+      <!-- VERDICT -->
+      <div class="verdict-card" id="vCard">
+        <div class="verdict-tint" id="vTint"></div>
+        <div class="verdict-content">
+          <div class="verdict-label" id="vLabel">${verdict}</div>
+          <div class="verdict-advice" id="vAdvice">${advice}</div>
+        </div>
+      </div>
+
+      <!-- TOP 4 METRICS -->
+      <div class="dg4" id="topRow">
+        <div class="dcard"><div class="dcard-label">Monthly cashflow ${tip('dcf','Net income after every expense including mortgage.')}</div><div class="dcard-val" id="dcCF" style="color:${cfC}">$0</div><div class="dcard-sub" id="dcACF" style="color:${cfC}">$0/yr</div></div>
+        <div class="dcard"><div class="dcard-label">Cap rate ${tip('dcp','NOI ÷ purchase price. Target 6%+ for most markets.')}</div><div class="dcard-val" id="dcCap">—</div><div class="dcard-sub">Net operating yield</div></div>
+        <div class="dcard"><div class="dcard-label">Cash-on-cash ${tip('dcc','Annual cashflow ÷ down payment. Your yield on invested cash.')}</div><div class="dcard-val" id="dcCoc">—</div><div class="dcard-sub">Yield on equity</div></div>
+        <div class="dcard"><div class="dcard-label">NOI / year ${tip('dni','Revenue minus operating costs, before debt service.')}</div><div class="dcard-val" id="dcNoi">—</div><div class="dcard-sub">Net operating income</div></div>
+      </div>
+
+      <!-- 2 GAUGES -->
+      <div class="dg-gauges">
+        ${mkGaugeCard('gCap','Cap Rate','Cap Rate','gCapV','Annual NOI divided by purchase price — the core measure of income relative to price, independent of financing.',
+          'Tap to learn more',
+          'Cap rate lets you compare properties regardless of how they\'re financed. It tells you how much income the property generates relative to what you\'re paying. Think of it as the gross yield of the asset itself.',
+          [{c:'var(--red)',w:2,label:'<5%'},{c:'var(--yellow)',w:2,label:'5–8%'},{c:'var(--accent)',w:2,label:'8%+'}])}
+        ${mkGaugeCard('gCoc','Cash-on-Cash','CoC Return','gCocV','Annual cashflow divided by your actual down payment — the real yield on the dollars you put in.',
+          'Tap to learn more',
+          'Unlike cap rate, cash-on-cash reflects your actual financing costs. This is the number that tells you how hard your money is working. If this is below 6%, you might do better elsewhere.',
+          [{c:'var(--red)',w:2,label:'<5%'},{c:'var(--yellow)',w:2,label:'5–10%'},{c:'var(--accent)',w:2,label:'10%+'}])}
+      </div>
+
+      <!-- CF + DONUT -->
+      <div class="dg2">
+        <div class="dcard"><div class="dcard-label" style="margin-bottom:12px">Income statement ${tip('iss','Monthly breakdown from gross rent to net cashflow.')}</div><div class="cf-stmt" id="cfStmt"></div></div>
+        <div class="dcard" style="display:flex;flex-direction:column">
+          <div class="dcard-label" style="margin-bottom:12px">Expense breakdown ${tip('ebs','Where your money goes monthly.')}</div>
+          <div style="flex:1;display:flex;align-items:center">
+            <div class="donut-wrap" style="width:100%">
+              <canvas id="donutChart" width="110" height="110" style="flex-shrink:0;width:110px;height:110px"></canvas>
+              <div class="donut-legend" id="donutLegend"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE EDIT -->
+      <div class="edit-panel">
+        <div class="edit-panel-title">Adjust variables — all results update live</div>
+        <div class="edit-grid">
+          <div class="edit-row">
+            <div class="fl" style="margin-bottom:2px">Purchase price</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px"><div style="font-weight:800;font-size:1rem" id="de_pV">$${fmtN(R.price)}</div></div>
+            <div class="strk"><div class="strk-bg"></div><div class="strk-fill" id="de_pF"></div><input type="range" id="de_p" min="${Math.round(R.price*.6/5000)*5000}" max="${Math.round(R.price*1.5/5000)*5000}" step="5000" value="${R.price}" oninput="deLive()"></div>
+          </div>
+          <div class="edit-row">
+            <div class="fl" style="margin-bottom:2px">Avg monthly rent</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px"><div style="font-weight:800;font-size:1rem" id="de_rV">$${fmtN(avgRent)}/mo</div></div>
+            <div class="strk"><div class="strk-bg"></div><div class="strk-fill" id="de_rF"></div><input type="range" id="de_r" min="${Math.max(400,Math.round(avgRent*.4/50)*50)}" max="${Math.round(avgRent*2/50)*50}" step="50" value="${avgRent}" oninput="deLive()"></div>
+          </div>
+          <div class="edit-row">
+            <div class="fl" style="margin-bottom:2px">Down payment</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px"><div style="font-weight:800;font-size:1rem" id="de_dV">${S.downPct}%</div><div style="font-size:.8rem;color:var(--muted)" id="de_dD">$${fmtN(R.down)}</div></div>
+            <div class="strk"><div class="strk-bg"></div><div class="strk-fill" id="de_dF"></div><input type="range" id="de_d" min="3" max="50" value="${S.downPct}" oninput="deLive()"></div>
+          </div>
+          <div class="edit-row">
+            <div class="fl" style="margin-bottom:2px">Interest rate</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px"><div style="font-weight:800;font-size:1rem" id="de_rtV">${S.rate.toFixed(2)}%</div></div>
+            <div class="strk"><div class="strk-bg"></div><div class="strk-fill" id="de_rtF"></div><input type="range" id="de_rt" min="4" max="12" step="0.25" value="${S.rate}" oninput="deLive()"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARTS SIDE BY SIDE -->
+      <div class="dg-charts">
+        <div class="dcard" id="eqCard">
+          <div class="chart-hdr">
+            <div class="chart-title">Equity projection ${tip('eqt','3% annual appreciation assumed. Hover any point.')}</div>
+            <div class="tf-row" id="tfR1"></div>
+          </div>
+          <canvas id="eqChart" style="height:150px"></canvas>
+        </div>
+        <div class="dcard" id="spxCard">
+          <div class="chart-hdr">
+            <div class="chart-title">vs. S&P 500 ${tip('spxt','Same down payment in the S&P at 10.3%/yr vs. this property.')}</div>
+            <div class="tf-row" id="tfR2"></div>
+          </div>
+          <canvas id="spxChart" style="height:150px"></canvas>
+          <div class="leg"><div class="legi"><div class="legdot" style="background:var(--accent)"></div>Property profit</div><div class="legi"><div class="legdot" style="background:var(--yellow)"></div>S&P 500</div></div>
+          <div class="chart-nums">
+            <div class="cnb"><div class="cnl" id="cnL1">Property (${tf2}yr)</div><div class="cnv" id="cnV1">—</div></div>
+            <div class="cnb"><div class="cnl" id="cnL2">S&P 500 (${tf2}yr)</div><div class="cnv" id="cnV2">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STRESS -->
+      <div class="stress-grid" style="margin-bottom:13px" id="stressG"></div>
+
+      <!-- ADVANCED -->
+      <div class="adv-btn-wrap"><button class="adv-btn" id="advBtn" onclick="toggleAdv()">↓ Advanced analysis</button></div>
+      <div class="adv-sec" id="advSec"><div class="adv-inner" id="advInner"></div></div>
+    </div>`;
+
+    buildTF('tfR1',tf1,v=>{tf1=v;const eq=equitySched(v);drawEqChart(eq);});
+    buildTF('tfR2',tf2,v=>{tf2=v;const eq=equitySched(v);drawSpxChart(eq,dashR);updateSpxNums(eq);});
+    staggerIn();
+    initDashSliders(R,avgRent);
+  }
+
+  setTimeout(()=>populateDash(R,isUpdate,cfC,stress,eq1,eq2,{verdict,color,advice}),isUpdate?0:100);
+}
+
+function populateDash(R,isUpdate,cfC,stress,eq1,eq2,{verdict,color,advice}){
+  const dur=isUpdate?0:800;
+
+  // Verdict
+  const vt=$('vTint');if(vt)vt.style.background=color;
+  const vl=$('vLabel');if(vl){vl.textContent=verdict;vl.style.color=color;}
+  const va=$('vAdvice');if(va)va.textContent=advice;
+
+  // Top metrics
+  const dcCF=$('dcCF');if(dcCF){dcCF.style.color=cfC;if(isUpdate)dcCF.textContent=(R.cf>=0?'+$':'-$')+fmtN(Math.abs(R.cf));else countUp(dcCF,R.cf,dur,'$','');}
+  const dcACF=$('dcACF');if(dcACF){dcACF.style.color=cfC;dcACF.textContent=(R.annualCF>=0?'+$':'-$')+fmtN(Math.abs(Math.round(R.annualCF)))+'/yr';}
+  const dcCap=$('dcCap');if(dcCap){dcCap.textContent=R.capRate.toFixed(2)+'%';dcCap.style.color=clrFor(R.capRate,5,8);}
+  const dcCoc=$('dcCoc');if(dcCoc){dcCoc.textContent=R.coc.toFixed(2)+'%';dcCoc.style.color=clrFor(R.coc,5,10);}
+  const dcNoi=$('dcNoi');if(dcNoi){dcNoi.textContent='$'+fmtN(Math.round(R.noi));dcNoi.style.color=R.noi>=0?'var(--text)':'var(--red)';}
+
+  // Gauges
+  animGauge('gCap','gCapV',R.capRate,clrFor(R.capRate,5,8),R.capRate*100/12,isUpdate,dur);
+  animGauge('gCoc','gCocV',R.coc,clrFor(R.coc,5,10),R.coc*100/12,isUpdate,dur);
+  const gmarks=[{id:'gCap',v:R.capRate.toFixed(1)+'%'},{id:'gCoc',v:R.coc.toFixed(1)+'%'}];
+  gmarks.forEach(m=>{const el=$('gmark_'+m.id);if(el)el.textContent='This deal: '+m.v;});
+
+  // Income statement
+  const cfStmt=$('cfStmt');
+  if(cfStmt){
+    const lines=[
+      {label:'Gross rent income',val:R.gross,sign:'+',color:'var(--accent)'},
+      {label:'Mortgage P&I',val:R.mort,sign:'−',color:'var(--muted)'},
+      {label:'Property tax',val:R.tx,sign:'−',color:'var(--muted)'},
+      {label:'Insurance',val:R.ins,sign:'−',color:'var(--muted)'},
+      {label:'Maintenance',val:R.mnt,sign:'−',color:'var(--muted)'},
+      {label:'Vacancy',val:R.vac,sign:'−',color:'var(--muted)'},
+      {label:'Management',val:R.mgmt,sign:'−',color:'var(--muted)'},
+      ...(R.oth>0?[{label:'Other',val:R.oth,sign:'−',color:'var(--muted)'}]:[]),
+    ].filter(x=>x.val>0);
+    cfStmt.innerHTML=lines.map(x=>`<div class="cfl"><div class="cfl-label">${x.label}</div><div class="cfl-val" style="color:${x.color}">${x.sign} $${fmtN(x.val)}/mo</div></div>`).join('')
+      +`<div class="cfl total"><div class="cfl-label">Net cashflow</div><div class="cfl-val" style="color:${cfC}">${R.cf>=0?'+':'-'} $${fmtN(Math.abs(R.cf))}/mo</div></div>`;
+  }
+
+  // Donut
+  const donutItems=[
+    {label:'Mortgage',v:Math.round(R.mort),c:'#0db050'},
+    {label:'Tax',v:R.tx,c:'#c47d00'},
+    {label:'Insurance',v:R.ins,c:'#7878a0'},
+    {label:'Maintenance',v:R.mnt,c:'#5a8a70'},
+    {label:'Vacancy',v:R.vac,c:'#c44e00'},
+    {label:'Management',v:R.mgmt,c:'#8850c0'},
+    ...(R.oth>0?[{label:'Other',v:R.oth,c:'#a0a3b8'}]:[]),
+  ].filter(x=>x.v>0);
+  requestAnimationFrame(()=>drawDonut('donutChart',donutItems));
+  const dl=$('donutLegend');
+  if(dl)dl.innerHTML=donutItems.map(x=>`<div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:${x.c}"></div><div class="dl-label">${x.label}</div></div><div class="dl-val">$${fmtN(x.v)}</div></div>`).join('');
+
+  // Stress
+  const sg=$('stressG');if(sg)sg.innerHTML=stress.map(s=>{const c=s.cf>=0?'var(--accent)':s.cf>-150?'var(--yellow)':'var(--red)';return`<div class="sc"><div class="st">${s.t}</div><div class="sn" style="color:${c}">${s.cf>=0?'+':'-'}$${fmtN(Math.abs(s.cf))}/mo</div><div class="si" style="background:${c}"></div></div>`;}).join('');
+
+  // Charts
+  setTimeout(()=>{drawEqChart(eq1);drawSpxChart(eq2,R);updateSpxNums(eq2);},isUpdate?10:200);
+  syncDashSliders(R);
+  if(advOpen)populateAdv(R);
+}
+
+/* ── DASH SLIDERS ── */
+function initDashSliders(R,avgRent){syncDashSliders(R);}
+function syncDashSliders(R){
+  const dp=R.dp??S.downPct;const rt=R.rate??S.rate;
+  setFill('de_dF',(dp-3)/47*100,dpColor(dp));setThumb('de_d',dpColor(dp));
+  setFill('de_rtF',(rt-4)/8*100,rateColor(rt));setThumb('de_rt',rateColor(rt));
+  const pp=$('de_p');if(pp){setFill('de_pF',(R.price-+pp.min)/(+pp.max-+pp.min)*100,'var(--accent)');setThumb('de_p','var(--accent)');}
+  const pr=$('de_r');if(pr){setFill('de_rF',(+pr.value-+pr.min)/(+pr.max-+pr.min)*100,'var(--accent)');setThumb('de_r','var(--accent)');}
+}
+
+function deLive(){
+  const pp=$('de_p');const pr=$('de_r');const pd=$('de_d');const prt=$('de_rt');if(!pp)return;
+  const price=+pp.value;const rent=+pr.value;const dp=+pd.value;const rate=+prt.value;
+  const dc=dpColor(dp);const rc=rateColor(rate);
+  setFill('de_pF',(price-+pp.min)/(+pp.max-+pp.min)*100,'var(--accent)');setThumb('de_p','var(--accent)');
+  setFill('de_rF',(rent-+pr.min)/(+pr.max-+pr.min)*100,'var(--accent)');setThumb('de_r','var(--accent)');
+  setFill('de_dF',(dp-3)/47*100,dc);setThumb('de_d',dc);
+  setFill('de_rtF',(rate-4)/8*100,rc);setThumb('de_rt',rc);
+  const dv=$('de_dV');if(dv)dv.textContent=dp+'%';
+  const dd=$('de_dD');if(dd)dd.textContent='$'+fmtN(price*dp/100);
+  const rv=$('de_rtV');if(rv)rv.textContent=rate.toFixed(2)+'%';
+  const pv=$('de_pV');if(pv)pv.textContent='$'+fmtN(price);
+  const rnv=$('de_rV');if(rnv)rnv.textContent='$'+fmtN(rent)+'/mo';
+  dbc(()=>{
+    const rents=Array(S.units).fill(rent);
+    dashR=calcCore({price,dp,rate,rents});
+    const R=dashR;const{verdict,color,advice}=verdictAndAdvice(R);const cfC=R.cf>=0?'var(--accent)':'var(--red)';
+    const eq1=equitySched(tf1,{price,dp,rate,rents});const eq2=equitySched(tf2,{price,dp,rate,rents});
+    const stress=[{t:'Rates +2%',cf:stressCF('rate',2,R)},{t:'Vacancy 20%',cf:stressCF('vac',20,R)},{t:'Rents −10%',cf:stressCF('rent',.1,R)}];
+    populateDash(R,true,cfC,stress,eq1,eq2,{verdict,color,advice});
+  },160);
+}
+
+/* ── ADVANCED ── */
+function toggleAdv(){
+  advOpen=!advOpen;
+  const sec=$('advSec');const btn=$('advBtn');
+  if(advOpen){sec.classList.add('open');btn.textContent='↑ Hide advanced analysis';if(dashR)populateAdv(dashR);setTimeout(()=>sec.scrollIntoView({behavior:'smooth',block:'start'}),100);}
+  else{sec.classList.remove('open');btn.textContent='↓ Advanced analysis';}
+}
+
+function populateAdv(R){
+  const ai=$('advInner');if(!ai)return;
+  const metrics=[
+    {key:'GRM',name:'Gross Rent Multiplier',val:R.grm.toFixed(1),unit:'×',color:R.grm<=10?'var(--accent)':R.grm<=15?'var(--yellow)':'var(--red)',
+     desc:'The GRM tells you how many years of gross rent it would take to pay off the purchase price. It\'s a quick filter investors use before running deeper numbers. A lower number is better — it means you\'re paying less for each dollar of annual income.',
+     verdict:R.grm<=10?'Strong — you\'re getting income at a reasonable multiple.':R.grm<=15?'Acceptable, but on the high side. Verify rent upside.':'High — you\'re paying a premium for this income stream.',
+     ranges:[{c:'var(--accent)',w:2,label:'<10×'},{c:'var(--yellow)',w:2,label:'10–15×'},{c:'var(--red)',w:2,label:'15×+'}]},
+    {key:'DSCR',name:'Debt Service Coverage',val:R.dscr.toFixed(2),unit:'×',color:R.dscr>=1.25?'var(--accent)':R.dscr>=1.0?'var(--yellow)':'var(--red)',
+     desc:'DSCR measures how comfortably the property\'s income covers its mortgage payments. Lenders use this to approve loans — most require 1.2–1.25x minimum. Anything below 1.0 means the rent doesn\'t cover the mortgage even before other expenses.',
+     verdict:R.dscr>=1.25?`At ${R.dscr.toFixed(2)}×, income comfortably covers the mortgage. Lenders will like this.`:R.dscr>=1.0?`${R.dscr.toFixed(2)}× is borderline — most lenders want 1.25 minimum.`:`${R.dscr.toFixed(2)}× means rent doesn't fully cover debt service. A lender may flag this.`,
+     ranges:[{c:'var(--red)',w:1,label:'<1.0'},{c:'var(--yellow)',w:1,label:'1.0–1.25'},{c:'var(--accent)',w:2,label:'1.25+'}]},
+    {key:'OER',name:'Operating Expense Ratio',val:R.oer.toFixed(1),unit:'%',color:R.oer<=40?'var(--accent)':R.oer<=55?'var(--yellow)':'var(--red)',
+     desc:'OER shows what percentage of gross income goes toward operating costs (excluding mortgage). It\'s a measure of operational efficiency. A well-run property typically runs 35–45%. Higher ratios can signal deferred maintenance, high taxes, or poor management.',
+     verdict:R.oer<=40?'Lean operation — operating costs are well-controlled.':R.oer<=55?'Moderate — keep an eye on maintenance and management costs.':'High — more than half of income is consumed by operating costs before the mortgage.',
+     ranges:[{c:'var(--accent)',w:2,label:'<40%'},{c:'var(--yellow)',w:2,label:'40–55%'},{c:'var(--red)',w:2,label:'55%+'}]},
+    {key:'BER',name:'Break-even Occupancy',val:R.ber.toFixed(1),unit:'%',color:R.ber<=80?'var(--accent)':R.ber<=92?'var(--yellow)':'var(--red)',
+     desc:'This is the occupancy rate you need to cover all your expenses including the mortgage. The lower this number, the more cushion you have against vacancy. If BER is above 100%, the property loses money even when fully occupied.',
+     verdict:R.ber<=80?`You only need ${R.ber.toFixed(0)}% occupancy to break even — that's a comfortable buffer.`:R.ber<=92?`You need ${R.ber.toFixed(0)}% occupancy to break even — vacancy risk is meaningful.`:`${R.ber.toFixed(0)}% break-even occupancy leaves almost no margin for error.`,
+     ranges:[{c:'var(--accent)',w:2,label:'<80%'},{c:'var(--yellow)',w:2,label:'80–92%'},{c:'var(--red)',w:2,label:'92%+'}]},
+    {key:'LTV',name:'Loan-to-Value',val:R.ltv.toFixed(1),unit:'%',color:R.ltv<=75?'var(--accent)':R.ltv<=85?'var(--yellow)':'var(--red)',
+     desc:'LTV is your loan size as a percentage of the property value. It determines your equity cushion and your risk exposure. Lower LTV means more equity and less risk — for investment properties, lenders typically cap LTV at 75–80%.',
+     verdict:R.ltv<=75?`At ${R.ltv.toFixed(0)}% LTV, you have solid equity from day one.`:R.ltv<=85?`${R.ltv.toFixed(0)}% LTV is manageable but leaves limited equity cushion.`:`${R.ltv.toFixed(0)}% LTV is high — minimal equity and likely requires PMI or a commercial lender.`,
+     ranges:[{c:'var(--accent)',w:2,label:'<75%'},{c:'var(--yellow)',w:2,label:'75–85%'},{c:'var(--red)',w:2,label:'85%+'}]},
+    {key:'IRR30',name:'30-Year Projected IRR',val:Math.max(0,R.irr30).toFixed(1),unit:'%',color:clrFor(R.irr30,8,12),
+     desc:'The 30-year IRR models the annualized return if you hold this property long-term, factoring in cumulative cashflow, equity paydown, and 3% annual appreciation. It captures the full compounding effect of real estate ownership over time.',
+     verdict:R.irr30>=12?`${R.irr30.toFixed(1)}% IRR over 30 years is a strong long-term hold.`:R.irr30>=8?`${R.irr30.toFixed(1)}% is competitive with public markets over a 30-year horizon.`:`${R.irr30.toFixed(1)}% long-term IRR — below the S&P 500 historical average.`,
+     ranges:[{c:'var(--red)',w:2,label:'<8%'},{c:'var(--yellow)',w:2,label:'8–12%'},{c:'var(--accent)',w:2,label:'12%+'}]},
+  ];
+  ai.innerHTML=metrics.map(m=>`
+  <div class="adv-metric">
+    <div class="adv-metric-left">
+      <div class="adv-metric-key">${m.key}</div>
+      <div class="adv-metric-name">${m.name}</div>
+      <div class="adv-metric-desc">${m.desc}</div>
+      <div class="adv-metric-verdict" style="background:color-mix(in srgb,${m.color} 10%,var(--card2));color:${m.color}">${m.verdict}</div>
+      <div class="adv-range-bar" style="margin-top:14px">${m.ranges.map(r=>`<div class="adv-range-seg" style="background:${r.c};flex:${r.w}"></div>`).join('')}</div>
+      <div style="display:flex;justify-content:space-between;font-size:.6rem;color:var(--subtle);margin-top:3px">${m.ranges.map(r=>`<span>${r.label}</span>`).join('')}</div>
+    </div>
+    <div class="adv-metric-right">
+      <div class="adv-metric-val" style="color:${m.color}">${m.val}</div>
+      <div class="adv-metric-unit">${m.unit}</div>
+    </div>
+  </div>`).join('');
+}
+
+/* ══ CHARTS ══ */
+const PAD={l:36,r:10,t:10,b:22};
+
+function getCanvasW(c){
+  const parent=c.parentElement;if(!parent)return 500;
+  const style=getComputedStyle(parent);const padding=parseFloat(style.paddingLeft||'0')+parseFloat(style.paddingRight||'0');
+  return Math.floor(parent.offsetWidth-padding);
+}
+
+function setupC(c,H=150){
+  const dpr=window.devicePixelRatio||1;const W=getCanvasW(c);
+  c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';
+  c._W=W;c._dpr=dpr;return{dpr,W,H};
+}
+
+function paintLine(ctx,pts,valFn,W,H,acC,dark,hovIdx){
+  const p=PAD;const vals=pts.map(valFn);const mn=Math.min(...vals);const mx=Math.max(...vals,mn+1);
+  const ys=v=>H-p.b-(v-mn)/(mx-mn)*(H-p.t-p.b);const xs=i=>p.l+i/(pts.length-1)*(W-p.l-p.r);
+  const mutC=dark?'rgba(255,255,255,.05)':'rgba(0,0,0,.04)';const txtC=dark?'rgba(255,255,255,.18)':'rgba(0,0,0,.18)';
+  ctx.clearRect(0,0,W*3,H*3);
+  for(let i=0;i<=3;i++){const y=p.t+(H-p.t-p.b)*i/3;ctx.strokeStyle=mutC;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(W-p.r,y);ctx.stroke();}
+  ctx.fillStyle=txtC;ctx.font='500 7.5px Inter';ctx.textAlign='right';
+  [mx,(mx+mn)/2,mn].forEach((v,i)=>{ctx.fillText('$'+fmtN(Math.round(v/1000))+'k',p.l-2,p.t+(H-p.t-p.b)*i/2+4);});
+  const grad=ctx.createLinearGradient(0,p.t,0,H-p.b);
+  grad.addColorStop(0,dark?'rgba(34,212,106,.13)':'rgba(13,176,80,.09)');grad.addColorStop(1,'rgba(34,212,106,0)');
+  ctx.beginPath();ctx.moveTo(xs(0),ys(vals[0]));for(let i=1;i<pts.length;i++)ctx.lineTo(xs(i),ys(vals[i]));
+  ctx.lineTo(xs(pts.length-1),H-p.b);ctx.lineTo(xs(0),H-p.b);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+  ctx.beginPath();ctx.strokeStyle=acC;ctx.lineWidth=2.5;ctx.lineJoin='round';
+  pts.forEach((pt,i)=>i===0?ctx.moveTo(xs(i),ys(vals[i])):ctx.lineTo(xs(i),ys(vals[i])));ctx.stroke();
+  if(hovIdx!=null){
+    ctx.beginPath();ctx.strokeStyle=dark?'rgba(255,255,255,.08)':'rgba(0,0,0,.06)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.moveTo(xs(hovIdx),p.t);ctx.lineTo(xs(hovIdx),H-p.b);ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();ctx.arc(xs(hovIdx),ys(vals[hovIdx]),5,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle=acC;ctx.lineWidth=2;ctx.stroke();
+  }
+  pts.forEach((pt,i)=>{if(i!==hovIdx){ctx.beginPath();ctx.arc(xs(i),ys(vals[i]),2,0,Math.PI*2);ctx.fillStyle=acC;ctx.fill();}
+    const step=Math.max(1,Math.floor(pts.length/6));if((i%step===0||i===pts.length-1)&&i!==hovIdx){ctx.fillStyle=txtC;ctx.font='500 7px Inter';ctx.textAlign='center';ctx.fillText('Yr'+pt.yr,xs(i),H-p.b+14);}});
+}
+
+function drawEqChart(eq){
+  const c=$('eqChart');if(!c)return;
+  const{dpr,W,H}=setupC(c,150);
+  const ctx=c.getContext('2d');ctx.save();ctx.scale(dpr,dpr);
+  const dark=isDark();const acC=dark?'#22d46a':'#0db050';
+  paintLine(ctx,eq,p=>p.equity,W,H,acC,dark,c._hov);ctx.restore();
+  c._eq=eq;
+  c.onmousemove=e=>hoverEq(e,c,eq);
+  c.onmouseleave=()=>{c._hov=null;hideCFT();if(c._eq)drawEqChart(c._eq);};
+}
+
+function drawSpxChart(eq,R){
+  const c=$('spxChart');if(!c)return;
+  const{dpr,W,H}=setupC(c,150);
+  const ctx=c.getContext('2d');ctx.save();ctx.scale(dpr,dpr);
+  const dark=isDark();const acC=dark?'#22d46a':'#0db050';const yyC=dark?'#f0a000':'#c47d00';const p=PAD;
+  const propV=eq.map(pt=>pt.profit);const spxV=eq.map(pt=>pt.spxGain);
+  const allV=[...propV,...spxV];const mn=Math.min(...allV);const mx=Math.max(...allV,mn+1);
+  const ys=v=>H-p.b-(v-mn)/(mx-mn)*(H-p.t-p.b);const xs=i=>p.l+i/(eq.length-1)*(W-p.l-p.r);
+  const mutC=dark?'rgba(255,255,255,.05)':'rgba(0,0,0,.04)';const txtC=dark?'rgba(255,255,255,.18)':'rgba(0,0,0,.18)';
+  ctx.clearRect(0,0,W*3,H*3);
+  for(let i=0;i<=3;i++){const y=p.t+(H-p.t-p.b)*i/3;ctx.strokeStyle=mutC;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(W-p.r,y);ctx.stroke();}
+  ctx.fillStyle=txtC;ctx.font='500 7.5px Inter';ctx.textAlign='right';
+  [mx,(mx+mn)/2,mn].forEach((v,i)=>{ctx.fillText('$'+fmtN(Math.round(v/1000))+'k',p.l-2,p.t+(H-p.t-p.b)*i/2+4);});
+  if(mn<0&&mx>0){const zy=ys(0);ctx.beginPath();ctx.strokeStyle=dark?'rgba(255,255,255,.07)':'rgba(0,0,0,.06)';ctx.setLineDash([3,3]);ctx.moveTo(p.l,zy);ctx.lineTo(W-p.r,zy);ctx.stroke();ctx.setLineDash([]);}
+  ctx.beginPath();ctx.strokeStyle=yyC;ctx.lineWidth=2;ctx.lineJoin='round';
+  eq.forEach((pt,i)=>i===0?ctx.moveTo(xs(i),ys(spxV[i])):ctx.lineTo(xs(i),ys(spxV[i])));ctx.stroke();
+  ctx.beginPath();ctx.strokeStyle=acC;ctx.lineWidth=2.5;ctx.lineJoin='round';
+  eq.forEach((pt,i)=>i===0?ctx.moveTo(xs(i),ys(propV[i])):ctx.lineTo(xs(i),ys(propV[i])));ctx.stroke();
+  const hi=c._hov;
+  if(hi!=null){
+    ctx.beginPath();ctx.strokeStyle=dark?'rgba(255,255,255,.08)':'rgba(0,0,0,.06)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.moveTo(xs(hi),p.t);ctx.lineTo(xs(hi),H-p.b);ctx.stroke();ctx.setLineDash([]);
+    [[propV,acC],[spxV,yyC]].forEach(([vals,col])=>{ctx.beginPath();ctx.arc(xs(hi),ys(vals[hi]),5,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();});
+  }
+  eq.forEach((pt,i)=>{const step=Math.max(1,Math.floor(eq.length/6));if(i%step===0||i===eq.length-1){ctx.fillStyle=txtC;ctx.font='500 7px Inter';ctx.textAlign='center';ctx.fillText('Yr'+pt.yr,xs(i),H-p.b+14);}});
+  ctx.restore();c._eq=eq;c._R=R;
+  c.onmousemove=e=>hoverSpx(e,c,eq);
+  c.onmouseleave=()=>{c._hov=null;hideCFT();if(c._eq)drawSpxChart(c._eq,c._R);};
+}
+
+function getChartXS(c,eq){return i=>PAD.l+i/(eq.length-1)*(c._W-PAD.l-PAD.r);}
+
+function hoverEq(e,c,eq){
+  const rect=c.getBoundingClientRect();const mx=(e.clientX-rect.left)/(rect.width/c._W);
+  const xs=getChartXS(c,eq);
+  let cl=0,md=9999;eq.forEach((pt,i)=>{const d=Math.abs(xs(i)-mx);if(d<md){md=d;cl=i;}});
+  if(c._hov===cl)return;c._hov=cl;drawEqChart(eq);
+  const pt=eq[cl];const dark=isDark();const acC=dark?'#22d46a':'#0db050';const rdC=dark?'#ff5050':'#e02020';
+  showCFT(e.clientX,e.clientY,[{l:'Equity',v:'$'+fmtN(pt.equity),c:acC},{l:'Total profit',v:(pt.profit>=0?'+':'-')+'$'+fmtN(Math.abs(pt.profit)),c:pt.profit>=0?acC:rdC},{l:'Prop. value',v:'$'+fmtN(pt.propValue),c:'var(--text)'}],pt.yr);
+}
+
+function hoverSpx(e,c,eq){
+  const rect=c.getBoundingClientRect();const mx=(e.clientX-rect.left)/(rect.width/c._W);
+  const xs=getChartXS(c,eq);
+  let cl=0,md=9999;eq.forEach((pt,i)=>{const d=Math.abs(xs(i)-mx);if(d<md){md=d;cl=i;}});
+  if(c._hov===cl)return;c._hov=cl;drawSpxChart(eq,c._R||dashR||calcCore());
+  const pt=eq[cl];const dark=isDark();const acC=dark?'#22d46a':'#0db050';const yyC=dark?'#f0a000':'#c47d00';const rdC=dark?'#ff5050':'#e02020';
+  showCFT(e.clientX,e.clientY,[{l:'Property profit',v:(pt.profit>=0?'+':'-')+'$'+fmtN(Math.abs(pt.profit)),c:pt.profit>=0?acC:rdC},{l:'S&P 500 gain',v:'+$'+fmtN(pt.spxGain),c:yyC}],pt.yr);
+}
+
+const cftEl=$('cft');
+function showCFT(mx,my,rows,yr){
+  cftEl.innerHTML=`<div class="cft-yr">Year ${yr}</div>${rows.map(r=>`<div class="cft-row"><span class="cft-l">${r.l}</span><span class="cft-v" style="color:${r.c}">${r.v}</span></div>`).join('')}`;
+  cftEl.style.display='block';
+  requestAnimationFrame(()=>{
+    cftEl.classList.add('show');
+    const W=window.innerWidth;const H=window.innerHeight;const cw=cftEl.offsetWidth||165;const ch=cftEl.offsetHeight||90;
+    let tx=mx+16;let ty=my-ch/2;
+    if(tx+cw>W-10)tx=mx-cw-12;if(ty<8)ty=8;if(ty+ch>H-8)ty=H-ch-8;
+    cftEl.style.left=tx+'px';cftEl.style.top=ty+'px';
+  });
+}
+function hideCFT(){cftEl.classList.remove('show');setTimeout(()=>{if(!cftEl.classList.contains('show'))cftEl.style.display='none';},130);}
+
+function updateSpxNums(eq){
+  if(!eq)return;const last=eq[eq.length-1];const pw=last.profit>last.spxGain;
+  const v1=$('cnV1');if(v1){v1.textContent=(last.profit>=0?'+':'-')+'$'+fmtN(Math.abs(last.profit));v1.style.color=pw?'var(--accent)':'var(--red)';}
+  const v2=$('cnV2');if(v2){v2.textContent='+$'+fmtN(last.spxGain);v2.style.color=!pw?'var(--accent)':'var(--text)';}
+  const l1=$('cnL1');if(l1)l1.textContent=`Property (${tf2}yr)`;
+  const l2=$('cnL2');if(l2)l2.textContent=`S&P 500 (${tf2}yr)`;
+}
+
+function buildTF(rowId,active,cb){
+  const el=$(rowId);if(!el)return;
+  [5,10,20,30].forEach(y=>{
+    const btn=document.createElement('button');btn.className='tfb'+(y===active?' on':'');btn.textContent=y+'yr';
+    btn.onclick=()=>{el.querySelectorAll('.tfb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');cb(y);};
+    el.appendChild(btn);
+  });
+}
+
+function redrawCharts(){
+  const eq1=$('eqChart');const eq2=$('spxChart');
+  if(eq1&&eq1._eq)drawEqChart(eq1._eq);
+  if(eq2&&eq2._eq)drawSpxChart(eq2._eq,eq2._R||dashR);
+}
+
+function staggerIn(){
+  const els=$('results').querySelectorAll('.dcard,.gcard,.verdict-card,.edit-panel,.dg-charts>*,.stress-grid,.adv-btn-wrap');
+  els.forEach((c,i)=>{c.style.opacity='0';c.style.transform='translateY(10px)';setTimeout(()=>{c.style.transition='opacity .34s ease,transform .34s ease';c.style.opacity='1';c.style.transform='none';},i*50+50);});
+}
+
+/* ══ PDF ══ */
+function openPdf(){const addr=addrStr();if(addr)$('pdfProp').value=addr;$('pdfModal').classList.add('open');}
+
+function doPrint(){
+  const name=$('pdfProp').value.trim()||addrStr()||'Property Analysis';
+  const R=dashR||calcCore();const{verdict,advice}=verdictAndAdvice(R);
+  const addr=addrStr();
+
+  const row=(label,val,sub='')=>`<tr><td>${label}${sub?`<div class="pdf-sub">${sub}</div>`:''}</td><td>${val}</td></tr>`;
+  const cfSign=(n)=>(n>=0?'+$':'-$')+fmtN(Math.abs(n));
+
+  $('pdfDoc').innerHTML=`
+  <div class="pdf-cover">
+    <div class="pdf-cover-logo">
+      <div class="pdf-cover-logo-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13V7l6-5 6 5v6H10V9H6v4Z"/></svg></div>
+      <div class="pdf-cover-logo-text"><span class="r">Real</span>Verdict — Investor Analysis</div>
+    </div>
+    <h1>${name}</h1>
+    ${addr?`<div class="pdf-cover-meta">📍 ${addr}</div>`:''}
+    <div class="pdf-cover-meta">Purchase price: $${fmtN(R.price)} · ${S.units===1?'Single family':S.units+'-unit'} rental · ${S.downPct}% down · ${S.rate}% rate</div>
+    <div class="pdf-cover-meta" style="color:#aaa">Generated ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})} via RealVerdict</div>
+  </div>
+
+  <div class="pdf-section">
+    <div class="pdf-section-title">Verdict</div>
+    <div class="pdf-verdict-box">
+      <div class="pdf-verdict-label">${verdict}</div>
+      <div class="pdf-verdict-text">${advice}</div>
+    </div>
+  </div>
+
+  <div class="pdf-two-col">
+    <div class="pdf-section">
+      <div class="pdf-section-title">Key Metrics</div>
+      <table class="pdf-table">
+        <tr><th>Metric</th><th>Value</th></tr>
+        ${row('Monthly cashflow',cfSign(R.cf)+'/mo','After all expenses')}
+        ${row('Annual cashflow',cfSign(R.annualCF)+'/yr')}
+        ${row('Cap rate',R.capRate.toFixed(2)+'%','NOI ÷ purchase price')}
+        ${row('Cash-on-cash',R.coc.toFixed(2)+'%','Annual CF ÷ down payment')}
+        ${row('Net operating income','$'+fmtN(Math.round(R.noi))+'/yr','Before debt service')}
+        ${row('10-yr IRR',Math.max(0,R.irr10).toFixed(1)+'%','Annualized projected return')}
+        ${row('30-yr IRR',Math.max(0,R.irr30).toFixed(1)+'%','Long-term hold scenario')}
+      </table>
+    </div>
+    <div class="pdf-section">
+      <div class="pdf-section-title">Risk Metrics</div>
+      <table class="pdf-table">
+        <tr><th>Metric</th><th>Value</th></tr>
+        ${row('DSCR',R.dscr.toFixed(2)+'×','Debt service coverage')}
+        ${row('LTV',R.ltv.toFixed(1)+'%','Loan-to-value')}
+        ${row('GRM',R.grm.toFixed(1)+'×','Gross rent multiplier')}
+        ${row('Break-even occupancy',R.ber.toFixed(1)+'%','To cover all costs')}
+        ${row('Operating expense ratio',R.oer.toFixed(1)+'%','OpEx ÷ gross income')}
+        ${row('Equity multiple (10yr)',R.eqMult.toFixed(2)+'×','Total return ÷ invested')}
+      </table>
+    </div>
+  </div>
+
+  <div class="pdf-section">
+    <div class="pdf-section-title">Monthly Income Statement</div>
+    <table class="pdf-table">
+      <tr><th>Item</th><th>Monthly</th></tr>
+      ${row('Gross rent income','+$'+fmtN(R.gross))}
+      ${row('Mortgage P&I','−$'+fmtN(Math.round(R.mort)),'Fixed 30-yr')}
+      ${row('Property tax','−$'+fmtN(R.tx),'Estimate')}
+      ${row('Insurance','−$'+fmtN(R.ins),'Estimate')}
+      ${row('Maintenance','−$'+fmtN(R.mnt),'Estimate')}
+      ${row('Vacancy cost','−$'+fmtN(R.vac),'Estimate')}
+      ${row('Property management','−$'+fmtN(R.mgmt),'Estimate')}
+      ${R.oth>0?row('Other costs','−$'+fmtN(R.oth)):''}
+      ${row('Net cashflow',cfSign(R.cf)+'/mo')}
+    </table>
+  </div>
+
+  <div class="pdf-section">
+    <div class="pdf-section-title">Financing</div>
+    <table class="pdf-table">
+      <tr><th>Item</th><th>Value</th></tr>
+      ${row('Purchase price','$'+fmtN(R.price))}
+      ${row('Down payment','$'+fmtN(R.down)+' ('+R.dp+'%)')}
+      ${row('Loan amount','$'+fmtN(Math.round(R.loan)))}
+      ${row('Interest rate',R.rate+'%')}
+      ${row('Monthly mortgage P&I','$'+fmtN(Math.round(R.mort)))}
+    </table>
+  </div>
+
+  <div class="pdf-footer">RealVerdict by Eli Merel · Generated ${new Date().toLocaleDateString()} · All projections assume 3% annual appreciation. Estimates are for analysis purposes only and do not constitute financial advice.</div>`;
+
+  $('pdfModal').classList.remove('open');
+  setTimeout(window.print,150);
+}
+
+function goBack(){S.step=3;showScreen('wizard');renderStep(false);}
 </script>
+</body>
 </html>
